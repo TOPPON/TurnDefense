@@ -71,38 +71,49 @@ public class BattleStageDisplayManager : MonoBehaviour
     }
     public void RefreshCharacter(Character character)
     {
+
+        int cursol = 0;
+        switch (character.charaState)
+        {
+            case Character.CharaState.None:
+                print("Noneを消そうとしています");
+                break;
+            case Character.CharaState.Ally:
+            case Character.CharaState.Reserve://味方の陣地にいる場合
+            case Character.CharaState.Waiting://味方の陣地にいる場合
+                cursol = BattleStageManager.Instance.GetCursolByCampIndex(character.encampment);
+                break;
+            case Character.CharaState.Frontline:
+            case Character.CharaState.Goal:
+            case Character.CharaState.Enemy:
+                cursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(character.lane, character.mass);
+                break;
+        }
         if (character.exists)
         {
-            switch(character.charaState)
+            for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
             {
-                case Character.CharaState.Waiting:
-                    break;
-                case Character.CharaState.Reserve:
-                    break;
-                case Character.CharaState.Frontline:
-                    break;
-                case Character.CharaState.Goal:
-                    break;
-                case Character.CharaState.Enemy:
-                    break;
+                DisplayCharacter dc = CharaDisplayObject[i];
+                if (dc.cursol == cursol)
+                {
+                    //求めたい形式であるかチェック
+                    return;
+                }
             }
+            //スキルタイプと状態をあわせて新規作成
+            DisplayCharacter newDisplayChara;
+            //switch();
+            //newDisplayChara= Instantiate("");
         }
         else
         {
-            foreach(DisplayCharacter chara in CharaDisplayObject)
+            for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
             {
-                switch (character.charaState)
+                DisplayCharacter dc = CharaDisplayObject[i];
+                if (dc.cursol == cursol)
                 {
-                    case Character.CharaState.Waiting:
-                        break;
-                    case Character.CharaState.Reserve:
-                        break;
-                    case Character.CharaState.Frontline:
-                        break;
-                    case Character.CharaState.Goal:
-                        break;
-                    case Character.CharaState.Enemy:
-                        break;
+                    CharaDisplayObject.RemoveAt(i);
+                    Destroy(dc.gameObject);
                 }
             }
         }

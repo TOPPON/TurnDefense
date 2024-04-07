@@ -21,9 +21,11 @@ public class Character : MonoBehaviour
     public enum CharaState
     {
         None,
-        Waiting,
-        Reserve,
-        Frontline,
+        Death, //Ally限定、死んで復活街、配置転換や売却などは不可能
+        Ally, //Ally限定、出撃前、売ったり配置転換ができる
+        Reserve, //控え、売ったり配置転換ができる
+        Waiting, //Ally限定、出撃中(mass,lane には同じものを共有)
+        Frontline, //戦線(encampment に待ち先を記入)
         Goal,//いるんかわからん
         Enemy
     }

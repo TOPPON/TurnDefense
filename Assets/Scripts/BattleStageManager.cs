@@ -26,8 +26,8 @@ public class BattleStageManager : MonoBehaviour
     }
     public void Activate()
     {
-        laneCount = Random.Range(3, 15);
-        laneLength = Random.Range(10, 20);
+        laneCount = Random.Range(3, 8);
+        laneLength = Random.Range(5, 12);
         BattleStageDisplayManager.Instance.SetLaneAndMass(laneCount, laneLength);
         for (int i = 0; i < laneCount; i++)
         {
