@@ -1,0 +1,356 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class StrategyManager : MonoBehaviour
+{
+    public static StrategyManager Instance;
+    // Start is called before the first frame update
+    public enum StrategyState
+    {
+        Normal,
+        Having,
+        Merging,
+        Recruiting
+    }
+    public StrategyState strategyState;
+    int cursol = 1; // -1から-18 キャンプ -19 売却 -20 募集 -21 GO 1からLanes*LaneLength 戦線
+    void Start()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else Destroy(gameObject);
+        strategyState = StrategyState.Normal;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public void FinishMerge()
+    {
+        strategyState = StrategyState.Normal;
+    }
+
+    //決定ボタンを押したときのアクション
+    public void PushAButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+                strategyState = StrategyState.Merging;
+                Character target1 = new Character();
+                target1.maxHp = Random.Range(1, 8);
+                target1.nowHp = target1.maxHp; // 現在の体力
+                target1.power = Random.Range(1, 8); // 攻撃力
+                target1.attackSpd = Random.Range(1, 8) + 4; // 攻撃速度、実際の数値ではなく4倍したもので管理、攻撃速度が 1.25 であれば 5 として管理する
+                target1.skillType = Random.Range(1, 8); // スキルの種類
+                target1.skillPoint = Random.Range(1, 8); // スキルポイント、０～１６で表現
+                target1.skillLevel = target1.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
+                target1.rarerity = Random.Range(1, 3);
+                Character target2 = new Character();
+                target2.maxHp = Random.Range(1, 8);
+                target2.nowHp = target2.maxHp; // 現在の体力
+                target2.power = Random.Range(1, 8); // 攻撃力
+                target2.attackSpd = Random.Range(1, 8) + 4; // 攻撃速度、実際の数値ではなく4倍したもので管理、攻撃速度が 1.25 であれば 5 として管理する
+                target2.skillType = Random.Range(1, 8); // スキルの種類
+                target2.skillPoint = Random.Range(1, 8); // スキルポイント、０～１６で表現
+                target2.skillLevel = target2.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
+                target2.rarerity = Random.Range(1, 3);
+                MergeManager.Instance.Activate(target1, target2);
+                //通常状態
+                break;
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                break;
+            case StrategyState.Merging:
+                MergeManager.Instance.PushAButton();
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+    }
+    public void PushBButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+                //通常状態
+                break;
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                break;
+            case StrategyState.Merging:
+                MergeManager.Instance.PushBButton();
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+    }
+
+    //左ボタンを押したときのアクション
+    public void PushLeftButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+            //通常状態
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                if (cursol < 0) //自陣
+                {
+                    if (cursol >= -18)//キャンプ
+                    {
+                        if (cursol == -1 | cursol == -7 | cursol == -13)
+                        {
+                            //キャンプ左端は売却へ
+                            cursol = -19;
+                        }
+                        else
+                        {
+                            cursol += 1;
+                        }
+                    }
+                    else if (cursol == -19) //売却
+                    {
+                        //動かない
+                    }
+                    else if (cursol == -20) //募集
+                    {
+                        //キャンプの右下に移動する
+                        cursol = -18;
+                    }
+                    else if (cursol == -21) //GO
+                    {
+                        //募集に移動する
+                        cursol = -20;
+                    }
+                }
+                else if (cursol > 0) //戦線
+                {
+                    if (cursol <= BattleStageManager.Instance.laneLength + 2)
+                    {
+                        //一番左の列は動かない
+                    }
+                    else
+                    {
+                        //一列左に移動
+                        cursol -= BattleStageManager.Instance.laneLength + 2;
+                    }
+                }
+                else
+                {
+                    print("error! invalid cursol");
+                }
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol + 21);
+                break;
+            case StrategyState.Merging:
+                MergeManager.Instance.PushLeftButton();
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+    }
+    public void PushRightButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+            //通常状態
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                if (cursol < 0) //自陣
+                {
+                    if (cursol >= -18)//キャンプ
+                    {
+                        if (cursol == -6 | cursol == -12 | cursol == -18)
+                        {
+                            //キャンプ右端は募集へ
+                            cursol = -20;
+                        }
+                        else
+                        {
+                            cursol -= 1;
+                        }
+                    }
+                    else if (cursol == -19) //売却
+                    {
+                        //キャンプの左下に移動する
+                        cursol = -13;
+                    }
+                    else if (cursol == -20) //募集
+                    {
+                        //GOに移動する
+                        cursol = -21;
+                    }
+                    else if (cursol == -21) //GO
+                    {
+                        //移動しない
+                    }
+                }
+                else if (cursol > 0) //戦線
+                {
+                    if (cursol > (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1))
+                    {
+                        //一番右の列は動かない
+                    }
+                    else
+                    {
+                        //一列右に移動
+                        cursol += BattleStageManager.Instance.laneLength + 2;
+                    }
+                }
+                else
+                {
+                    print("error! invalid cursol");
+                }
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol + 21);
+                break;
+            case StrategyState.Merging:
+                MergeManager.Instance.PushRightButton();
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+    }
+    public void PushUpButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+            //通常状態
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                if (cursol < 0) //自陣
+                {
+                    if (cursol >= -18)//キャンプ
+                    {
+                        if (cursol >= -6)
+                        {
+                            //キャンプ上端は戦線へ
+                            cursol = (int)(((cursol * -1.0f) - 1) / (6 - 1) * (BattleStageManager.Instance.laneCount - 1) + 0.5f) * (BattleStageManager.Instance.laneLength + 2) + 1;
+                        }
+                        else
+                        {
+                            //キャンプを一行上に移動
+                            cursol += 6;
+                        }
+                    }
+                    else if (cursol == -19) //売却
+                    {
+                        //戦線の左下に移動
+                        cursol = 1;
+                    }
+                    else if (cursol == -20) //募集
+                    {
+                        //戦線の右下に移動
+                        cursol = (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1) + 1;
+                    }
+                    else if (cursol == -21) //GO
+                    {
+                        //戦線の右下に移動
+                        cursol = (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1) + 1;
+                    }
+                }
+                else if (cursol > 0) //戦線
+                {
+                    if (cursol % (BattleStageManager.Instance.laneLength + 2) == 0)
+                    {
+                        //一番上の列は動かない
+                    }
+                    else
+                    {
+                        //一行上に移動
+                        cursol += 1;
+                    }
+                }
+                else
+                {
+                    print("error! invalid cursol");
+                }
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol + 21);
+                break;
+            case StrategyState.Merging:
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+
+    }
+    public void PushDownButton()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+            //通常状態
+            case StrategyState.Having:
+                //キャラクターを所持した状態
+                if (cursol < 0) //自陣
+                {
+                    if (cursol >= -18)//キャンプ
+                    {
+                        if (cursol <= -13)
+                        {
+                            //キャンプ下端は動かない
+                        }
+                        else
+                        {
+                            //キャンプを一行下に移動
+                            cursol -= 6;
+                        }
+                    }
+                    else if (cursol == -19) //売却
+                    {
+                        //動かない
+                    }
+                    else if (cursol == -20) //募集
+                    {
+                        //動かない
+                    }
+                    else if (cursol == -21) //GO
+                    {
+                        //動かない
+                    }
+                }
+                else if (cursol > 0) //戦線
+                {
+                    if (cursol % (BattleStageManager.Instance.laneLength + 2) == 1)
+                    {
+                        //キャンプに移動
+                        cursol = (int)((int)(cursol / (BattleStageManager.Instance.laneLength + 2)) * 1.0f / (BattleStageManager.Instance.laneCount - 1) * (6 - 1) + 0.5f) * -1 - 1;
+                    }
+                    else
+                    {
+                        //一行下に移動
+                        cursol -= 1;
+                    }
+                }
+                else
+                {
+                    print("error! invalid cursol");
+                }
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol + 21);
+                break;
+            case StrategyState.Merging:
+                //マージ中の画面
+                break;
+            case StrategyState.Recruiting:
+                //採用中の画面
+                break;
+        }
+
+    }
+}

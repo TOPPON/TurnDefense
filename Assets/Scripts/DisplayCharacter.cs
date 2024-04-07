@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleStage : MonoBehaviour
+public class DisplayCharacter : MonoBehaviour
 {
-    const int lanes = 3;
-    const int laneLength = 5;
+    public int cursol;//BattleStage ‚Ì cursol ‚É‘Î‰ž‚·‚é
     // Start is called before the first frame update
     void Start()
     {
