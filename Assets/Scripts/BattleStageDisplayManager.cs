@@ -97,6 +97,21 @@ public class BattleStageDisplayManager : MonoBehaviour
                 if (dc.cursol == cursol)
                 {
                     //求めたい形式であるかチェック
+                    if (dc.charaType == character.skillType && dc.displayCharaState == character.charaState)
+                    {
+                        //同じキャラクター
+                        if (dc.displayCharaState == Character.CharaState.Death)
+                        {
+                            if (dc.reviveTurn != character.reviveTurn)
+                            {
+                                
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    }
                     return;
                 }
             }

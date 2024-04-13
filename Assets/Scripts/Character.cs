@@ -17,6 +17,8 @@ public class Character : MonoBehaviour
     public int skillPoint; // スキルポイント、０～１６で表現
     public int skillLevel; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
     public int rarerity; // レアリティ、☆１～５で表現
+    public int reviveTurn; //復活までにあと何ターン必要か
+    public int reviveMaxTurn; //復活までに何ターン必要か
     public bool exists;//実在するか否か
     public enum CharaState
     {
@@ -61,6 +63,8 @@ public class Character : MonoBehaviour
         rarerity = targetCharacter.rarerity; // レアリティ、☆１～５で表現
         exists = targetCharacter.exists;
         charaState = targetCharacter.charaState;
+        reviveTurn = targetCharacter.reviveTurn; //復活までにあと何ターン必要か
+        reviveMaxTurn = targetCharacter.reviveMaxTurn; //復活までに何ターン必要か
     }
     public void SetExists(bool exists)
     {
