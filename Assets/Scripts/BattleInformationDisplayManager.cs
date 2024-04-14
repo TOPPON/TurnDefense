@@ -7,6 +7,8 @@ public class BattleInformationDisplayManager : MonoBehaviour
 {
     [SerializeField] public TextMeshProUGUI turnsText;
     [SerializeField] public TextMeshProUGUI clearConditionText;
+    [SerializeField] public TextMeshProUGUI SellText;
+    [SerializeField] public TextMeshProUGUI MoneyText;
     public static BattleInformationDisplayManager Instance;
     // Start is called before the first frame update
     void Start()
@@ -51,10 +53,38 @@ public class BattleInformationDisplayManager : MonoBehaviour
         }
         clearConditionText.text = temptext;
     }
-
+    public void RefreshMoneyText(int money)
+    {
+        MoneyText.text = "所持金\n$"+money.ToString();
+    }
+    public void RefreshSellPriceText(int sellPrice)
+    {
+        SellText.text = "売却\n$"+ sellPrice.ToString();
+    }
     public void RefreshCharacterStatusDisplay(Character target)
     {
-        
+        /*Target2Rarity.text = "星" + character.rarity.ToString();
+        Target2HitPoint.text = "体力：" + character.maxHp.ToString();
+        Target2Power.text = "力：" + character.power.ToString();
+        // 攻速は管理している値とユーザに見せる値が異なるためユーザに見せる値を計算するロジックをつける
+        string tempstring = ((int)(character.attackSpd / 4)).ToString();
+        switch (character.attackSpd % 4)
+        {
+            case 0:
+                tempstring += ".00";
+                break;
+            case 1:
+                tempstring += ".25";
+                break;
+            case 2:
+                tempstring += ".50";
+                break;
+            case 3:
+                tempstring += ".75";
+                break;
+        }
+        Target2AttackSpd.text = "攻速：" + tempstring;
+        Target2Skill.text = "スキル：\n" + character.skillType.ToString() + "\nLv." + character.skillLevel.ToString() + "(" + character.skillPoint.ToString() + ")";*/
     }
     public void RefreshCharacterMergeDisplay(Character target1,Character target2)
     {

@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public int stageType = 0; //0: 人数, 1: ターン
     public int clearPeople = 3; //クリアに必要な人数
     public int clearTurn = 100; //時間制限または防衛ターン数
+    public int money = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Invoke("Activate",1f);
+            Invoke("Activate",0.1f);
         }
         else Destroy(gameObject);
     }
@@ -77,6 +78,36 @@ public class GameManager : MonoBehaviour
             turnState = TurnState.AfterStrategy;
         }
     }
+
+    //金銭操作
+    public void AddMoney(int value)
+    {
+        if (value <= 0)
+        {
+            print("error! invalid Money value:" + value);
+        }
+        money += value;
+        BattleInformationDisplayManager.Instance.RefreshMoneyText(money);
+    }
+    public void ReduceMoney(int value)
+    {
+        if (value <= 0)
+        {
+            print("error! invalid Money value:" + value);
+        }
+        money -= value;
+        BattleInformationDisplayManager.Instance.RefreshMoneyText(money);
+    }
+    public void SetMoney(int value)
+    {
+        if (value < 0)
+        {
+            print("error! invalid Money value:" + value);
+        }
+        money = value;
+        BattleInformationDisplayManager.Instance.RefreshMoneyText(money);
+    }
+
     public void Activate()
     {
         BattleStageManager.Instance.Activate();

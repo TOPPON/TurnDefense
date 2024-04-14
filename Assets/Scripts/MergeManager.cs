@@ -28,7 +28,7 @@ public class MergeManager : MonoBehaviour
         MergeDisplayManager.Instance.ActivateDisplay();
         MergeDisplayManager.Instance.SetTarget1Character(target1);
         MergeDisplayManager.Instance.SetTarget2Character(target2);
-        MergeDisplayManager.Instance.SetResultCharacter(result,target1.skillType,target2.skillType);
+        MergeDisplayManager.Instance.SetResultCharacter(result, target1.skillType, target2.skillType);
     }
     // Update is called once per frame
     void Update()
@@ -76,6 +76,17 @@ public class MergeManager : MonoBehaviour
         //マージする処理
         StrategyManager.Instance.FinishMerge();
         MergeDisplayManager.Instance.DeactivateDisplay();
+        int skillResult = Random.Range(0, 2);
+        switch (skillResult)
+        {
+            case 0:
+                result.skillType = target1.skillType;//ターンの処理とか追加する必要がありそう
+                break;
+            case 1:
+                result.skillType = target2.skillType;
+                break;
+        }
+        BattleStageManager.Instance.AddCharacterToCamp(result);
     }
     void Back()
     {
@@ -94,7 +105,9 @@ public class MergeManager : MonoBehaviour
         //result.skillnowTurn; // スキルの残りターン数。
         result.skillPoint = target1.skillPoint + target2.skillPoint; // スキルポイント、０～１６で表現
         result.skillLevel = result.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
-        result.rarerity = target1.rarerity + 1;
+        result.rarity = target1.rarity + 1;
+        result.reviveMaxTurn = result.rarity + 1;
+        result.reviveTurn = 0;// Random.Range(0, result.reviveMaxTurn+1);//デバッグ用
         return result;
     }
 }

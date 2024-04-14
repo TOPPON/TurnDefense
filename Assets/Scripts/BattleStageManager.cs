@@ -64,11 +64,12 @@ public class BattleStageManager : MonoBehaviour
         }
         camp[cursol].SetStatus(newCharacter, true);
         camp[cursol].SetExists(true);
+        BattleStageDisplayManager.Instance.RefreshCharacter(camp[cursol]);
         return true;
     }
 
-    //キャラを追加する。空きがなかった場合は false を返す
-    public bool AddCharacter(Character newCharacter)
+    //キャンプにキャラを追加する。空きがなかった場合は false を返す
+    public bool AddCharacterToCamp(Character newCharacter)
     {
         //存在しないキャラクターがいた際にステータスを入れ替える
         foreach (Character chara in camp)
@@ -77,6 +78,7 @@ public class BattleStageManager : MonoBehaviour
             {
                 chara.SetStatus(newCharacter, true);
                 chara.SetExists(true);
+                chara.UpdateCharacterStatusInCamp();
                 BattleStageDisplayManager.Instance.RefreshCharacter(chara);
                 return true; //追加成功
             }
@@ -116,13 +118,25 @@ public class BattleStageManager : MonoBehaviour
     {
         return (lane - 1) * (laneLength + 2) + mass - 1;
     }
-    public int GetCampIndex(int index)
+    //public int GetCampIndex(int index)
+    //{
+    //    return index - 1;
+    //}
+    public int GetCampIndexByCursol(int cursol)
     {
-        return index - 1;
+        return -cursol;
     }
     public int GetCursolByCampIndex(int campIndex)
     {
-        return -campIndex - 1;
+        return -campIndex;
+    }
+    public Vector2 GetFrontlineLaneAndMassByCursol(int cursol)
+    {
+        return new Vector2((int)((cursol - 1) / (laneLength + 2)) + 1, (cursol - 1) % (laneLength + 2) + 1);
+    }
+    public int GetFrontlineIndexByCursol(int cursol)
+    {
+        return cursol - 1;
     }
     public int GetCursolByFrontlineIndex(int frontlineIndex)
     {

@@ -16,7 +16,7 @@ public class Character : MonoBehaviour
     public int skillnowTurn; // スキルの残りターン数。
     public int skillPoint; // スキルポイント、０～１６で表現
     public int skillLevel; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
-    public int rarerity; // レアリティ、☆１～５で表現
+    public int rarity; // レアリティ、☆１～５で表現
     public int reviveTurn; //復活までにあと何ターン必要か
     public int reviveMaxTurn; //復活までに何ターン必要か
     public bool exists;//実在するか否か
@@ -60,7 +60,7 @@ public class Character : MonoBehaviour
         skillnowTurn = targetCharacter.skillnowTurn; // スキルの残りターン数。
         skillPoint = targetCharacter.skillPoint; // スキルポイント、０～１６で表現
         skillLevel = targetCharacter.skillLevel; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
-        rarerity = targetCharacter.rarerity; // レアリティ、☆１～５で表現
+        rarity = targetCharacter.rarity; // レアリティ、☆１～５で表現
         exists = targetCharacter.exists;
         charaState = targetCharacter.charaState;
         reviveTurn = targetCharacter.reviveTurn; //復活までにあと何ターン必要か
@@ -69,5 +69,31 @@ public class Character : MonoBehaviour
     public void SetExists(bool exists)
     {
         this.exists = exists;
+    }
+    public void Revive()
+    {
+        if ((reviveTurn > 0) || (charaState == CharaState.Death))
+        {
+            print("Revive error!! invalid status reviveturn:" + reviveTurn + " Charastate:" + charaState);
+            return;
+        }
+        reviveTurn = 0;
+        UpdateCharacterStatusInCamp();
+    }
+    public void UpdateCharacterStatusInCamp()
+    {
+        if (encampment <= 0)
+        {
+            print("UpdateCharacterStatus error!! invalid encampment:" + encampment);
+            return;
+        }
+        if (encampment <= 12)
+        {
+            charaState = CharaState.Ally;
+        }
+        else
+        {
+            charaState = CharaState.Reserve;
+        }
     }
 }

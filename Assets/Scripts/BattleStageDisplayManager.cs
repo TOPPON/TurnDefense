@@ -12,6 +12,9 @@ public class BattleStageDisplayManager : MonoBehaviour
     [SerializeField] List<RectTransform> CursolPosition;
     [SerializeField] List<DisplayCharacter> CharaDisplayObject;//必要があれば追加する
     [SerializeField] GameObject CursolObject;
+    [SerializeField] GameObject NormalCursolObject;
+    [SerializeField] GameObject BattleStageObject;
+    [SerializeField] GameObject DisplayCharacterPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,7 +70,21 @@ public class BattleStageDisplayManager : MonoBehaviour
     public void UpdateCursol(int cursol)
     {
         print(cursol);
-        CursolObject.GetComponent<RectTransform>().position = CursolPosition[cursol].position;
+        CursolObject.GetComponent<RectTransform>().position = CursolPosition[cursol + 21].position;
+    }
+    public void ActivateNormalCursol(int cursol)
+    {
+        print(cursol);
+        NormalCursolObject.SetActive(true);
+        NormalCursolObject.GetComponent<RectTransform>().position = CursolPosition[cursol + 21].position;
+    }
+    public void DeactivateNormalCursol()
+    {
+        NormalCursolObject.SetActive(false);
+    }
+    public Vector3 GetCursolPosition(int cursol)
+    {
+        return CursolPosition[cursol + 21].position;
     }
     public void RefreshCharacter(Character character)
     {
@@ -81,6 +98,8 @@ public class BattleStageDisplayManager : MonoBehaviour
             case Character.CharaState.Ally:
             case Character.CharaState.Reserve://味方の陣地にいる場合
             case Character.CharaState.Waiting://味方の陣地にいる場合
+            case Character.CharaState.Death:
+                print("encampment:" + character.encampment);
                 cursol = BattleStageManager.Instance.GetCursolByCampIndex(character.encampment);
                 break;
             case Character.CharaState.Frontline:
@@ -89,6 +108,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                 cursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(character.lane, character.mass);
                 break;
         }
+        print("cursol:" + cursol);
         if (character.exists)
         {
             for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
@@ -104,7 +124,8 @@ public class BattleStageDisplayManager : MonoBehaviour
                         {
                             if (dc.reviveTurn != character.reviveTurn)
                             {
-                                
+                                //復活ターンを更新
+                                dc.reviveTurn = character.reviveTurn;
                             }
                             else
                             {
@@ -118,10 +139,14 @@ public class BattleStageDisplayManager : MonoBehaviour
             //スキルタイプと状態をあわせて新規作成
             DisplayCharacter newDisplayChara;
             //switch();
-            //newDisplayChara= Instantiate("");
+            newDisplayChara = Instantiate(DisplayCharacterPrefab).GetComponent<DisplayCharacter>();
+            newDisplayChara.transform.parent = BattleStageObject.transform;
+            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState);
+            CharaDisplayObject.Add(newDisplayChara);
         }
         else
         {
+            print("CharaDisplayObjectCount:"+CharaDisplayObject.Count);
             for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
             {
                 DisplayCharacter dc = CharaDisplayObject[i];

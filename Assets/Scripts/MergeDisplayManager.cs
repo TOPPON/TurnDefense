@@ -9,17 +9,17 @@ public class MergeDisplayManager : MonoBehaviour
     public static MergeDisplayManager Instance;
     // Start is called before the first frame update
     [SerializeField] GameObject mergeDisplay;
-    [SerializeField] TextMeshProUGUI Target1Rarerity;
+    [SerializeField] TextMeshProUGUI Target1Rarity;
     [SerializeField] TextMeshProUGUI Target1HitPoint;
     [SerializeField] TextMeshProUGUI Target1Power;
     [SerializeField] TextMeshProUGUI Target1AttackSpd;
     [SerializeField] TextMeshProUGUI Target1Skill;
-    [SerializeField] TextMeshProUGUI Target2Rarerity;
+    [SerializeField] TextMeshProUGUI Target2Rarity;
     [SerializeField] TextMeshProUGUI Target2HitPoint;
     [SerializeField] TextMeshProUGUI Target2Power;
     [SerializeField] TextMeshProUGUI Target2AttackSpd;
     [SerializeField] TextMeshProUGUI Target2Skill;
-    [SerializeField] TextMeshProUGUI ResultRarerity;
+    [SerializeField] TextMeshProUGUI ResultRarity;
     [SerializeField] TextMeshProUGUI ResultHitPoint;
     [SerializeField] TextMeshProUGUI ResultPower;
     [SerializeField] TextMeshProUGUI ResultAttackSpd;
@@ -42,7 +42,7 @@ public class MergeDisplayManager : MonoBehaviour
     }
     public void SetTarget1Character(Character character)
     {
-        Target1Rarerity.text = "星" + character.rarerity.ToString();
+        Target1Rarity.text = "星" + character.rarity.ToString();
         Target1HitPoint.text = "体力：" + character.maxHp.ToString();
         Target1Power.text = "力：" + character.power.ToString();
         // 攻速は管理している値とユーザに見せる値が異なるためユーザに見せる値を計算するロジックをつける
@@ -67,7 +67,7 @@ public class MergeDisplayManager : MonoBehaviour
     }
     public void SetTarget2Character(Character character)
     {
-        Target2Rarerity.text = "星" + character.rarerity.ToString();
+        Target2Rarity.text = "星" + character.rarity.ToString();
         Target2HitPoint.text = "体力：" + character.maxHp.ToString();
         Target2Power.text = "力：" + character.power.ToString();
         // 攻速は管理している値とユーザに見せる値が異なるためユーザに見せる値を計算するロジックをつける
@@ -92,7 +92,7 @@ public class MergeDisplayManager : MonoBehaviour
     }
     public void SetResultCharacter(Character character, int skillType1, int skillType2)
     {
-        ResultRarerity.text = "星" + character.rarerity.ToString();
+        ResultRarity.text = "星" + character.rarity.ToString();
         ResultHitPoint.text = "体力：" + character.maxHp.ToString();
         ResultPower.text = "力：" + character.power.ToString();
         // 攻速は管理している値とユーザに見せる値が異なるためユーザに見せる値を計算するロジックをつける
