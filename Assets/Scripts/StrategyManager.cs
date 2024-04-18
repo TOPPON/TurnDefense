@@ -53,11 +53,16 @@ public class StrategyManager : MonoBehaviour
                 }
                 else if (cursol == -20)//•åW
                 {
-                    strategyState = StrategyState.Recruiting;
+                    if (GameManager.Instance.money >= 5 &&
+                        BattleStageManager.Instance.CheckEnableAddCharacter())
+                    {
+                        GameManager.Instance.ReduceMoney(5);
+                        strategyState = StrategyState.Recruiting;
+                    }
                 }
                 else if (cursol == -19)//”„‹p
                 {
-
+                    //‰½‚à‚µ‚È‚¢
                 }
                 else if (cursol < 0)
                 {

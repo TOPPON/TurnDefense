@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviour
     }
     public TurnState turnState;
     public TurnState beforeState; //一個前のステート
-    public int turns=0;
-    public int goalPeople=0;
+    public int turns = 0;
+    public int goalPeople = 0;
     public int stageType = 0; //0: 人数, 1: ターン
     public int clearPeople = 3; //クリアに必要な人数
     public int clearTurn = 100; //時間制限または防衛ターン数
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Invoke("Activate",0.1f);
+            Invoke("Activate", 0.1f);
         }
         else Destroy(gameObject);
     }
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
     }
     public void ReduceMoney(int value)
     {
-        if (value <= 0)
+        if (value <= 0 || money < value)
         {
             print("error! invalid Money value:" + value);
         }

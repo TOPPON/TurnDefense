@@ -69,7 +69,7 @@ public class BattleStageManager : MonoBehaviour
     }
 
     //キャンプにキャラを追加する。空きがなかった場合は false を返す
-    public bool AddCharacterToCamp(Character newCharacter)
+    public void AddCharacterToCamp(Character newCharacter)
     {
         //存在しないキャラクターがいた際にステータスを入れ替える
         foreach (Character chara in camp)
@@ -80,10 +80,21 @@ public class BattleStageManager : MonoBehaviour
                 chara.SetExists(true);
                 chara.UpdateCharacterStatusInCamp();
                 BattleStageDisplayManager.Instance.RefreshCharacter(chara);
-                return true; //追加成功
+                return; //追加成功
             }
         }
-        return false; //追加失敗
+        print("error AddCharacterToCamp"); //追加失敗
+    }
+    public bool CheckEnableAddCharacter()
+    {
+        foreach (Character chara in camp)
+        {
+            if (chara.exists == false)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     public bool RemoveCharacter(int campIndex, int frontlineIndex)
     {
