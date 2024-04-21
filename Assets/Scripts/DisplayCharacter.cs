@@ -30,7 +30,8 @@ public class DisplayCharacter : MonoBehaviour
     {
         this.cursol = cursol;
         gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
-        switch (charaType)
+        gameObject.GetComponent<Image>().sprite = GetDisplayCharacterByType(charaType);
+        /*switch (charaType)
         {
             case 0:
                 gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/character_kishi_man_02_green_black");
@@ -38,7 +39,7 @@ public class DisplayCharacter : MonoBehaviour
             case 1:
                 gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/character_uranaishi_01");
                 break;
-        }
+        }*/
         rarityText.text = "êØ"+rarity.ToString();
         print("reviveTurn:"+reviveTurn);
         if (reviveTurn>0)//écÇËÉ^Å[ÉìÇ™1à»è„ÇÃÇ∆Ç´
@@ -52,5 +53,37 @@ public class DisplayCharacter : MonoBehaviour
             reviveDisplay.SetActive(false);
         }
             
+    }
+    public static Sprite GetDisplayCharacterByType(int charaType)
+    {
+        switch (charaType)
+        {
+            case 0:
+                return Resources.Load<Sprite>("Sprites/character_kishi_man_02_green_black");
+            case 1:
+                return Resources.Load<Sprite>("Sprites/character_uranaishi_01");
+            case 2:
+                return Resources.Load<Sprite>("Sprites/character_kishi_woman_blue_gold");
+            case 3:
+                return Resources.Load<Sprite>("Sprites/character_murabito_child_02_man_blue");
+            case 4:
+                return Resources.Load<Sprite>("Sprites/character_oji_03_red_brown");
+            case 5:
+                return Resources.Load<Sprite>("Sprites/character_senshi_red");
+            case 6:
+                return Resources.Load<Sprite>("Sprites/character_shinpu_green");
+            case 7:
+                return Resources.Load<Sprite>("Sprites/character_tozoku_green");
+            case 8:
+                return Resources.Load<Sprite>("Sprites/character_heishi_armor_02_green");
+            case 9:
+                return Resources.Load<Sprite>("Sprites/character_yusha_01_red");
+            case 10:
+                return Resources.Load<Sprite>("Sprites/character_hime_child_white_gold");
+            case 11:
+                return Resources.Load<Sprite>("Sprites/character_yosei_02_blue");
+        }
+        print("error!!!! invalid charaType:"+charaType);
+        return Resources.Load<Sprite>("Sprites/Black");
     }
 }

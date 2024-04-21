@@ -69,7 +69,6 @@ public class BattleStageDisplayManager : MonoBehaviour
     }
     public void UpdateCursol(int cursol)
     {
-        print(cursol);
         CursolObject.GetComponent<RectTransform>().position = CursolPosition[cursol + 21].position;
     }
     public void ActivateNormalCursol(int cursol)
@@ -100,7 +99,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             case Character.CharaState.Waiting://–¡•û‚Ìw’n‚É‚¢‚éê‡
             case Character.CharaState.Death:
                 print("encampment:" + character.encampment);
-                cursol = BattleStageManager.Instance.GetCursolByCampIndex(character.encampment);
+                cursol = BattleStageManager.Instance.GetCursolByEncampment(character.encampment);
                 break;
             case Character.CharaState.Frontline:
             case Character.CharaState.Goal:
@@ -146,7 +145,7 @@ public class BattleStageDisplayManager : MonoBehaviour
         }
         else
         {
-            print("CharaDisplayObjectCount:"+CharaDisplayObject.Count);
+            print("CharaDisplayObjectCount:" + CharaDisplayObject.Count);
             for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
             {
                 DisplayCharacter dc = CharaDisplayObject[i];

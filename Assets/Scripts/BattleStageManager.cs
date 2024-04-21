@@ -29,6 +29,7 @@ public class BattleStageManager : MonoBehaviour
         laneCount = Random.Range(3, 8);
         laneLength = Random.Range(5, 12);
         BattleStageDisplayManager.Instance.SetLaneAndMass(laneCount, laneLength);
+        BattleStageDisplayManager.Instance.UpdateCursol(-1);
         for (int i = 0; i < laneCount; i++)
         {
             for (int j = 0; j < (laneLength + 2); j++)
@@ -108,6 +109,8 @@ public class BattleStageManager : MonoBehaviour
             //バリデーション
             if (!camp[campIndex].exists) return false;
             camp[campIndex].SetExists(false);
+            camp[campIndex].mass = 0;
+            camp[campIndex].lane = 0;
             BattleStageDisplayManager.Instance.RefreshCharacter(camp[campIndex]);
             return true;
         }
@@ -116,6 +119,7 @@ public class BattleStageManager : MonoBehaviour
             //バリデーション
             if (!frontline[frontlineIndex].exists) return false;
             frontline[frontlineIndex].SetExists(false);
+            frontline[frontlineIndex].encampment = 0;
             BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
             return true;
         }
@@ -135,11 +139,27 @@ public class BattleStageManager : MonoBehaviour
     //}
     public int GetCampIndexByCursol(int cursol)
     {
-        return -cursol;
+        return -cursol - 1;
+    }
+    public int GetCampIndexByEncampment(int encampment)
+    {
+        return encampment - 1;
     }
     public int GetCursolByCampIndex(int campIndex)
     {
-        return -campIndex;
+        return -campIndex - 1;
+    }
+    public int GetCursolByEncampment(int encampment)
+    {
+        return -encampment;
+    }
+    public int GetEncampmentByCampIndex(int campIndex)
+    {
+        return campIndex + 1;
+    }
+    public int GetEncampmentByCursol(int cursol)
+    {
+        return -cursol;
     }
     public Vector2 GetFrontlineLaneAndMassByCursol(int cursol)
     {

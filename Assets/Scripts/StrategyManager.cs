@@ -14,7 +14,7 @@ public class StrategyManager : MonoBehaviour
         Recruiting
     }
     public StrategyState strategyState;
-    int cursol = 1; // -1から-18 キャンプ -19 売却 -20 募集 -21 GO 1からLanes*LaneLength 戦線
+    int cursol = -1; // -1から-18 キャンプ -19 売却 -20 募集 -21 GO 1からLanes*LaneLength 戦線
     int normalCursol = 1;//通常状態のカーソル
     void Start()
     {
@@ -34,6 +34,20 @@ public class StrategyManager : MonoBehaviour
     public void FinishMerge()
     {
         strategyState = StrategyState.Normal;
+        //cursol = normalCursol;
+        //BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+        BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+    }
+    public void FinishRecruite()
+    {
+        strategyState = StrategyState.Normal;
+    }
+    public void FinishHaving()
+    {
+        strategyState = StrategyState.Normal;
+        //cursol = normalCursol;
+        //BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+        BattleStageDisplayManager.Instance.DeactivateNormalCursol();
     }
     public int CalcSellPrice(Character target)
     {
@@ -53,11 +67,12 @@ public class StrategyManager : MonoBehaviour
                 }
                 else if (cursol == -20)//募集
                 {
-                    if (GameManager.Instance.money >= 5 &&
+                    if (GameManager.Instance.money >= 10 &&
                         BattleStageManager.Instance.CheckEnableAddCharacter())
                     {
-                        GameManager.Instance.ReduceMoney(5);
+                        GameManager.Instance.ReduceMoney(10);
                         strategyState = StrategyState.Recruiting;
+                        RecruiteManager.Instance.Activate();
                     }
                 }
                 else if (cursol == -19)//売却
@@ -119,28 +134,66 @@ public class StrategyManager : MonoBehaviour
                         int income = CalcSellPrice(BattleStageManager.Instance.camp[campIndex]);
                         GameManager.Instance.AddMoney(income);
                         BattleStageManager.Instance.RemoveCharacter(campIndex, -1);
-                        strategyState = StrategyState.Normal;
+                        FinishHaving();
                         cursol = normalCursol;
                         BattleStageDisplayManager.Instance.UpdateCursol(cursol);
-                        BattleStageDisplayManager.Instance.DeactivateNormalCursol();
                     }
-                    else if (normalCursol > 0)
+                    else if (normalCursol > 0)//出陣対象のやつなので不可でもいいかも、可能にする場合はキャンプも売る
                     {
                         int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
                         int income = CalcSellPrice(BattleStageManager.Instance.frontline[frontlineIndex]);
                         GameManager.Instance.AddMoney(income);
                         BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
-                        strategyState = StrategyState.Normal;
-                        cursol = normalCursol;
-                        BattleStageDisplayManager.Instance.UpdateCursol(cursol);
-                        BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+                        FinishHaving();
                     }
                 }
                 else if (cursol < 0)
                 {
-                    int campIndex = -cursol - 1;
-                    //空きます奈良移動させる
-                    //誰かいたら星が一緒の場合はマージ画面へ
+                    int campIndex = BattleStageManager.Instance.GetCampIndexByCursol(cursol);
+                    //空きますなら移動させる
+                    Character target = BattleStageManager.Instance.camp[campIndex];
+                    if (!target.exists)
+                    {
+                        Character normalCursolChara;
+                        if (normalCursol > 0)//戦線の場合
+                        {
+                            //戦線側のキャラクター取得
+                            int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
+                            normalCursolChara = BattleStageManager.Instance.frontline[frontlineIndex];
+                            //キャンプで待っている人も削除する必要がある
+                            int frontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalCursolChara.encampment);
+                            //Character normalCursolWaitingChara = BattleStageManager.Instance.camp[frontlineWaitingIndex];
+                            BattleStageManager.Instance.RemoveCharacter(frontlineWaitingIndex, -1);
+                            BattleStageManager.Instance.AddCharacterToCamp(normalCursolChara, campIndex);
+                            BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
+                            FinishHaving();
+                        }
+                        else //キャンプの場合
+                        {
+                            int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
+                            normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
+                            BattleStageManager.Instance.AddCharacterToCamp(normalCursolChara, campIndex);
+                            BattleStageManager.Instance.RemoveCharacter(normalCampIndex, -1);
+                            FinishHaving();
+                        }
+                    }
+                    else // 誰かがいた場合
+                    {
+                        if (cursol == normalCursol) break;
+                        Character normalCursolChara;
+                        Character havingChara= BattleStageManager.Instance.camp[campIndex];
+                        if (normalCursol < 0) //キャンプの場合
+                        {
+                            int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
+                            normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
+                            if (havingChara.rarity == normalCursolChara.rarity && havingChara.rarity <= 4)
+                            {
+                                //マージ画面へ
+                                MergeManager.Instance.Activate(normalCursolChara, havingChara);
+                                strategyState = StrategyState.Merging;
+                            }
+                        }
+                    }
                     //それ以外は何もしない
                 }
                 else if (cursol > 0)
@@ -163,6 +216,7 @@ public class StrategyManager : MonoBehaviour
                 //マージ中の画面
                 break;
             case StrategyState.Recruiting:
+                RecruiteManager.Instance.PushAButton();
                 //採用中の画面
                 break;
         }
@@ -173,7 +227,7 @@ public class StrategyManager : MonoBehaviour
         {
             case StrategyState.Normal:
                 //通常状態
-                strategyState = StrategyState.Merging;
+                /*strategyState = StrategyState.Merging;
                 Character target1 = new Character();
                 target1.maxHp = Random.Range(1, 8);
                 target1.nowHp = target1.maxHp; // 現在の体力
@@ -192,13 +246,12 @@ public class StrategyManager : MonoBehaviour
                 target2.skillPoint = Random.Range(1, 8); // スキルポイント、０～１６で表現
                 target2.skillLevel = target2.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
                 target2.rarity = Random.Range(1, 5);
-                MergeManager.Instance.Activate(target1, target2);
+                MergeManager.Instance.Activate(target1, target2);*/
                 break;
             case StrategyState.Having:
-                strategyState = StrategyState.Normal;
+                FinishHaving();
                 cursol = normalCursol;
                 BattleStageDisplayManager.Instance.UpdateCursol(cursol);
-                BattleStageDisplayManager.Instance.DeactivateNormalCursol();
                 //キャラとカーソルを戻す
                 //キャラクターを所持した状態
                 break;
@@ -469,5 +522,47 @@ public class StrategyManager : MonoBehaviour
                 break;
         }
 
+    }
+    public void PushSellButton()
+    {
+        if (GameManager.Instance.turnState == GameManager.TurnState.Strategy && strategyState == StrategyState.Having)
+        {
+            //これ以降は通常の売却と同じにすること
+            if (normalCursol < 0)
+            {
+                int campIndex = -normalCursol - 1;
+                int income = CalcSellPrice(BattleStageManager.Instance.camp[campIndex]);
+                GameManager.Instance.AddMoney(income);
+                BattleStageManager.Instance.RemoveCharacter(campIndex, -1);
+                strategyState = StrategyState.Normal;
+                cursol = normalCursol;
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+            }
+            else if (normalCursol > 0)//出陣対象のやつなので不可でもいいかも、可能にする場合はキャンプも売る
+            {
+                int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
+                int income = CalcSellPrice(BattleStageManager.Instance.frontline[frontlineIndex]);
+                GameManager.Instance.AddMoney(income);
+                BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
+                strategyState = StrategyState.Normal;
+                cursol = normalCursol;
+                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+            }
+        }
+    }
+    public void PushRecruiteButton()
+    {
+        if (GameManager.Instance.turnState == GameManager.TurnState.Strategy && strategyState == StrategyState.Normal)
+        {
+            if (GameManager.Instance.money >= 10 &&
+                BattleStageManager.Instance.CheckEnableAddCharacter())
+            {
+                GameManager.Instance.ReduceMoney(10);
+                strategyState = StrategyState.Recruiting;
+                RecruiteManager.Instance.Activate();
+            }
+        }
     }
 }
