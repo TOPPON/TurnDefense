@@ -8,6 +8,7 @@ public class RecruitingDisplayManager : MonoBehaviour
 {
     public static RecruitingDisplayManager Instance;
     [SerializeField] TextMeshProUGUI NextButtonText;
+    [SerializeField] GameObject recruiteDisplay;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +23,10 @@ public class RecruitingDisplayManager : MonoBehaviour
     void Update()
     {
         
+    }
+    public void Activate()
+    {
+
     }
     public void UpdateNextButtonText()
     {
