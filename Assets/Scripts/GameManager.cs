@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             Invoke("Activate", 0.1f);
+            SetMoney(1000);
         }
         else Destroy(gameObject);
     }
