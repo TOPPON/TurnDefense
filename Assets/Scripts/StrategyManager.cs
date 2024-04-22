@@ -14,8 +14,8 @@ public class StrategyManager : MonoBehaviour
         Recruiting
     }
     public StrategyState strategyState;
-    int cursol = -1; // -1‚©‚ç-18 ƒLƒƒƒ“ƒv -19 ”„‹p -20 •åW -21 GO 1‚©‚çLanes*LaneLength íü
-    int normalCursol = 1;//’Êíó‘Ô‚ÌƒJ[ƒ\ƒ‹
+    int cursol = -1; // -1ã‹ã‚‰-18 ã‚­ãƒ£ãƒ³ãƒ— -19 å£²å´ -20 å‹Ÿé›† -21 GO 1ã‹ã‚‰Lanes*LaneLength æˆ¦ç·š
+    int normalCursol = 1;//é€šå¸¸çŠ¶æ…‹ã®ã‚«ãƒ¼ã‚½ãƒ«
     void Start()
     {
         if (Instance == null)
@@ -54,18 +54,18 @@ public class StrategyManager : MonoBehaviour
         print("CalcSellPrice:" + target.rarity * 5);
         return target.rarity * 5;
     }
-    //Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚ÌƒAƒNƒVƒ‡ƒ“
+    //æ±ºå®šãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³
     public void PushAButton()
     {
         switch (strategyState)
         {
             case StrategyState.Normal:
-                //’Êíó‘Ô
+                //é€šå¸¸çŠ¶æ…‹
                 if (cursol == -21)//GO
                 {
                     GameManager.Instance.PushGOButton();
                 }
-                else if (cursol == -20)//•åW
+                else if (cursol == -20)//å‹Ÿé›†
                 {
                     if (GameManager.Instance.money >= 10 &&
                         BattleStageManager.Instance.CheckEnableAddCharacter())
@@ -75,9 +75,9 @@ public class StrategyManager : MonoBehaviour
                         RecruiteManager.Instance.Activate();
                     }
                 }
-                else if (cursol == -19)//”„‹p
+                else if (cursol == -19)//å£²å´
                 {
-                    //‰½‚à‚µ‚È‚¢
+                    //ä½•ã‚‚ã—ãªã„
                 }
                 else if (cursol < 0)
                 {
@@ -112,22 +112,22 @@ public class StrategyManager : MonoBehaviour
                 {
                     print("error! cursol is invalid");
                 }
-                //ƒJ[ƒ\ƒ‹æ‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚ê‚Îó‘Ô•Ï‰»AHaving‚ÉˆÈ~‚µ‚ÄƒJ[ƒ\ƒ‹‚ğ•Ï‚¦‚é
-                //•åWƒ}ƒX‚È‚ç•åW‚·‚é
-                //GOƒ}ƒX‚È‚çƒ^[ƒ“‚ği‚ß‚é
+                //ã‚«ãƒ¼ã‚½ãƒ«å…ˆã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã„ã‚Œã°çŠ¶æ…‹å¤‰åŒ–ã€Havingã«ä»¥é™ã—ã¦ã‚«ãƒ¼ã‚½ãƒ«ã‚’å¤‰ãˆã‚‹
+                //å‹Ÿé›†ãƒã‚¹ãªã‚‰å‹Ÿé›†ã™ã‚‹
+                //GOãƒã‚¹ãªã‚‰ã‚¿ãƒ¼ãƒ³ã‚’é€²ã‚ã‚‹
                 break;
             case StrategyState.Having:
                 if (cursol == -21)//GO
                 {
-                    //‰½‚à‚µ‚È‚¢
+                    //ä½•ã‚‚ã—ãªã„
                 }
-                else if (cursol == -20)//•åW
+                else if (cursol == -20)//å‹Ÿé›†
                 {
-                    //‰½‚à‚µ‚È‚¢
+                    //ä½•ã‚‚ã—ãªã„
                 }
-                else if (cursol == -19)//”„‹p
+                else if (cursol == -19)//å£²å´
                 {
-                    //”„‹p
+                    //å£²å´
                     if (normalCursol < 0)
                     {
                         int campIndex = -normalCursol - 1;
@@ -138,7 +138,7 @@ public class StrategyManager : MonoBehaviour
                         cursol = normalCursol;
                         BattleStageDisplayManager.Instance.UpdateCursol(cursol);
                     }
-                    else if (normalCursol > 0)//ow‘ÎÛ‚Ì‚â‚Â‚È‚Ì‚Å•s‰Â‚Å‚à‚¢‚¢‚©‚àA‰Â”\‚É‚·‚éê‡‚ÍƒLƒƒƒ“ƒv‚à”„‚é
+                    else if (normalCursol > 0)//å‡ºé™£å¯¾è±¡ã®ã‚„ã¤ãªã®ã§ä¸å¯ã§ã‚‚ã„ã„ã‹ã‚‚ã€å¯èƒ½ã«ã™ã‚‹å ´åˆã¯ã‚­ãƒ£ãƒ³ãƒ—ã‚‚å£²ã‚‹
                     {
                         int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
                         int income = CalcSellPrice(BattleStageManager.Instance.frontline[frontlineIndex]);
@@ -150,17 +150,17 @@ public class StrategyManager : MonoBehaviour
                 else if (cursol < 0)
                 {
                     int campIndex = BattleStageManager.Instance.GetCampIndexByCursol(cursol);
-                    //‹ó‚«‚Ü‚·‚È‚çˆÚ“®‚³‚¹‚é
+                    //ç©ºãã¾ã™ãªã‚‰ç§»å‹•ã•ã›ã‚‹
                     Character target = BattleStageManager.Instance.camp[campIndex];
                     if (!target.exists)
                     {
                         Character normalCursolChara;
-                        if (normalCursol > 0)//íü‚Ìê‡
+                        if (normalCursol > 0)//æˆ¦ç·šã®å ´åˆ
                         {
-                            //íü‘¤‚ÌƒLƒƒƒ‰ƒNƒ^[æ“¾
+                            //æˆ¦ç·šå´ã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼å–å¾—
                             int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
                             normalCursolChara = BattleStageManager.Instance.frontline[frontlineIndex];
-                            //ƒLƒƒƒ“ƒv‚Å‘Ò‚Á‚Ä‚¢‚él‚àíœ‚·‚é•K—v‚ª‚ ‚é
+                            //ã‚­ãƒ£ãƒ³ãƒ—ã§å¾…ã£ã¦ã„ã‚‹äººã‚‚å‰Šé™¤ã™ã‚‹å¿…è¦ãŒã‚ã‚‹
                             int frontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalCursolChara.encampment);
                             //Character normalCursolWaitingChara = BattleStageManager.Instance.camp[frontlineWaitingIndex];
                             BattleStageManager.Instance.RemoveCharacter(frontlineWaitingIndex, -1);
@@ -168,7 +168,7 @@ public class StrategyManager : MonoBehaviour
                             BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
                             FinishHaving();
                         }
-                        else //ƒLƒƒƒ“ƒv‚Ìê‡
+                        else //ã‚­ãƒ£ãƒ³ãƒ—ã®å ´åˆ
                         {
                             int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
                             normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
@@ -177,47 +177,69 @@ public class StrategyManager : MonoBehaviour
                             FinishHaving();
                         }
                     }
-                    else // ’N‚©‚ª‚¢‚½ê‡
+                    else // èª°ã‹ãŒã„ãŸå ´åˆ
                     {
                         if (cursol == normalCursol) break;
                         Character normalCursolChara;
                         Character havingChara= BattleStageManager.Instance.camp[campIndex];
-                        if (normalCursol < 0) //ƒLƒƒƒ“ƒv‚Ìê‡
+                        if (normalCursol < 0) //ã‚­ãƒ£ãƒ³ãƒ—ã®å ´åˆ
                         {
                             int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
                             normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
                             if (havingChara.rarity == normalCursolChara.rarity && havingChara.rarity <= 4)
                             {
-                                //ƒ}[ƒW‰æ–Ê‚Ö
+                                //ãƒãƒ¼ã‚¸ç”»é¢ã¸
                                 MergeManager.Instance.Activate(normalCursolChara, havingChara);
                                 strategyState = StrategyState.Merging;
                             }
                         }
                     }
-                    //‚»‚êˆÈŠO‚Í‰½‚à‚µ‚È‚¢
+                    //ãã‚Œä»¥å¤–ã¯ä½•ã‚‚ã—ãªã„
                 }
                 else if (cursol > 0)
                 {
-                    //‹ó‚«‚Ü‚·‚È‚çˆÚ“®‚³‚¹‚é
-                    //’N‚©‚¢‚½‚ç‰½‚à‚µ‚È‚¢
+                    int frontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
+                    Character target=BattleManager.Instance.frontline[frontlineIndex];
+                    if(!target.exists)
+                    {
+                        if (normalCursol<0)
+                        {
+                            //ã‚­ãƒ£ãƒ³ãƒ—â†’æˆ¦ç·šã¸ã®ç§»å‹•
+                            
+                        }
+                        else if(normalCursol>0)
+                        {
+                            //æˆ¦ç·šâ†’æˆ¦ç·šã®ç§»å‹•
+                            Vector2 targetPos=BattleManager.Instance.GetLaneAndMassByCursol(cursol);
+                            Vector2 normalPos=BattleManager.Instance.GetLaneAndMassByCursol(normalCursol);
+                            if (targetPos.y==1&&normalPos.y==1&&cursolï¼=normalCursol)
+                            {
+                                //ç§»å‹•
+                                Character normalFrontlineChara=BattleStageManager.
+                                Character frontlineWaitingChara=
+                            }
+                        }
+                    }
+                    //ç©ºãã¾ã™ãªã‚‰ç§»å‹•ã•ã›ã‚‹
+                    //èª°ã‹ã„ãŸã‚‰ä½•ã‚‚ã—ãªã„
                 }
                 else
                 {
                     print("error! cursol is invalid");
                 }
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
-                //“¯‚¶ƒ}ƒX‚È‚ç’u‚­(ƒXƒe[ƒg‚¾‚¯‚ğ•ÏX‚·‚é)
-                //ƒ}[ƒW‰Â”\‚Å‚ ‚ê‚Îƒ}[ƒW‰æ–Ê‚Ö
-                //‹ó‚«ƒ}ƒX‚È‚çˆÚ“®‚³‚¹‚é
-                //”„‹pƒ}ƒX‚È‚ç”„‚é
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
+                //åŒã˜ãƒã‚¹ãªã‚‰ç½®ã(ã‚¹ãƒ†ãƒ¼ãƒˆã ã‘ã‚’å¤‰æ›´ã™ã‚‹)
+                //ãƒãƒ¼ã‚¸å¯èƒ½ã§ã‚ã‚Œã°ãƒãƒ¼ã‚¸ç”»é¢ã¸
+                //ç©ºããƒã‚¹ãªã‚‰ç§»å‹•ã•ã›ã‚‹
+                //å£²å´ãƒã‚¹ãªã‚‰å£²ã‚‹
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushAButton();
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
                 RecruiteManager.Instance.PushAButton();
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
     }
@@ -226,25 +248,25 @@ public class StrategyManager : MonoBehaviour
         switch (strategyState)
         {
             case StrategyState.Normal:
-                //’Êíó‘Ô
+                //é€šå¸¸çŠ¶æ…‹
                 /*strategyState = StrategyState.Merging;
                 Character target1 = new Character();
                 target1.maxHp = Random.Range(1, 8);
-                target1.nowHp = target1.maxHp; // Œ»İ‚Ì‘Ì—Í
-                target1.power = Random.Range(1, 8); // UŒ‚—Í
-                target1.attackSpd = Random.Range(1, 8) + 4; // UŒ‚‘¬“xAÀÛ‚Ì”’l‚Å‚Í‚È‚­4”{‚µ‚½‚à‚Ì‚ÅŠÇ—AUŒ‚‘¬“x‚ª 1.25 ‚Å‚ ‚ê‚Î 5 ‚Æ‚µ‚ÄŠÇ—‚·‚é
-                target1.skillType = Random.Range(1, 3); // ƒXƒLƒ‹‚Ìí—Ş
-                target1.skillPoint = Random.Range(1, 8); // ƒXƒLƒ‹ƒ|ƒCƒ“ƒgA‚O`‚P‚U‚Å•\Œ»
-                target1.skillLevel = target1.skillPoint / 3; // ƒXƒLƒ‹ƒŒƒxƒ‹AƒXƒLƒ‹ƒ|ƒCƒ“ƒg‚ğ‚R‚ÅŠ„‚Á‚½¤(Ø‚èÌ‚Ä)A‚O`‚T‚Å•\Œ»
+                target1.nowHp = target1.maxHp; // ç¾åœ¨ã®ä½“åŠ›
+                target1.power = Random.Range(1, 8); // æ”»æ’ƒåŠ›
+                target1.attackSpd = Random.Range(1, 8) + 4; // æ”»æ’ƒé€Ÿåº¦ã€å®Ÿéš›ã®æ•°å€¤ã§ã¯ãªã4å€ã—ãŸã‚‚ã®ã§ç®¡ç†ã€æ”»æ’ƒé€Ÿåº¦ãŒ 1.25 ã§ã‚ã‚Œã° 5 ã¨ã—ã¦ç®¡ç†ã™ã‚‹
+                target1.skillType = Random.Range(1, 3); // ã‚¹ã‚­ãƒ«ã®ç¨®é¡
+                target1.skillPoint = Random.Range(1, 8); // ã‚¹ã‚­ãƒ«ãƒã‚¤ãƒ³ãƒˆã€ï¼ï½ï¼‘ï¼–ã§è¡¨ç¾
+                target1.skillLevel = target1.skillPoint / 3; // ã‚¹ã‚­ãƒ«ãƒ¬ãƒ™ãƒ«ã€ã‚¹ã‚­ãƒ«ãƒã‚¤ãƒ³ãƒˆã‚’ï¼“ã§å‰²ã£ãŸå•†(åˆ‡ã‚Šæ¨ã¦)ã€ï¼ï½ï¼•ã§è¡¨ç¾
                 target1.rarity = Random.Range(1, 5);
                 Character target2 = new Character();
                 target2.maxHp = Random.Range(1, 8);
-                target2.nowHp = target2.maxHp; // Œ»İ‚Ì‘Ì—Í
-                target2.power = Random.Range(1, 8); // UŒ‚—Í
-                target2.attackSpd = Random.Range(1, 8) + 4; // UŒ‚‘¬“xAÀÛ‚Ì”’l‚Å‚Í‚È‚­4”{‚µ‚½‚à‚Ì‚ÅŠÇ—AUŒ‚‘¬“x‚ª 1.25 ‚Å‚ ‚ê‚Î 5 ‚Æ‚µ‚ÄŠÇ—‚·‚é
-                target2.skillType = Random.Range(1, 3); // ƒXƒLƒ‹‚Ìí—Ş
-                target2.skillPoint = Random.Range(1, 8); // ƒXƒLƒ‹ƒ|ƒCƒ“ƒgA‚O`‚P‚U‚Å•\Œ»
-                target2.skillLevel = target2.skillPoint / 3; // ƒXƒLƒ‹ƒŒƒxƒ‹AƒXƒLƒ‹ƒ|ƒCƒ“ƒg‚ğ‚R‚ÅŠ„‚Á‚½¤(Ø‚èÌ‚Ä)A‚O`‚T‚Å•\Œ»
+                target2.nowHp = target2.maxHp; // ç¾åœ¨ã®ä½“åŠ›
+                target2.power = Random.Range(1, 8); // æ”»æ’ƒåŠ›
+                target2.attackSpd = Random.Range(1, 8) + 4; // æ”»æ’ƒé€Ÿåº¦ã€å®Ÿéš›ã®æ•°å€¤ã§ã¯ãªã4å€ã—ãŸã‚‚ã®ã§ç®¡ç†ã€æ”»æ’ƒé€Ÿåº¦ãŒ 1.25 ã§ã‚ã‚Œã° 5 ã¨ã—ã¦ç®¡ç†ã™ã‚‹
+                target2.skillType = Random.Range(1, 3); // ã‚¹ã‚­ãƒ«ã®ç¨®é¡
+                target2.skillPoint = Random.Range(1, 8); // ã‚¹ã‚­ãƒ«ãƒã‚¤ãƒ³ãƒˆã€ï¼ï½ï¼‘ï¼–ã§è¡¨ç¾
+                target2.skillLevel = target2.skillPoint / 3; // ã‚¹ã‚­ãƒ«ãƒ¬ãƒ™ãƒ«ã€ã‚¹ã‚­ãƒ«ãƒã‚¤ãƒ³ãƒˆã‚’ï¼“ã§å‰²ã£ãŸå•†(åˆ‡ã‚Šæ¨ã¦)ã€ï¼ï½ï¼•ã§è¡¨ç¾
                 target2.rarity = Random.Range(1, 5);
                 MergeManager.Instance.Activate(target1, target2);*/
                 break;
@@ -252,35 +274,35 @@ public class StrategyManager : MonoBehaviour
                 FinishHaving();
                 cursol = normalCursol;
                 BattleStageDisplayManager.Instance.UpdateCursol(cursol);
-                //ƒLƒƒƒ‰‚ÆƒJ[ƒ\ƒ‹‚ğ–ß‚·
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
+                //ã‚­ãƒ£ãƒ©ã¨ã‚«ãƒ¼ã‚½ãƒ«ã‚’æˆ»ã™
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushBButton();
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
     }
 
-    //¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚ÌƒAƒNƒVƒ‡ƒ“
+    //å·¦ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³
     public void PushLeftButton()
     {
         switch (strategyState)
         {
             case StrategyState.Normal:
-            //’Êíó‘Ô
+            //é€šå¸¸çŠ¶æ…‹
             case StrategyState.Having:
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
-                if (cursol < 0) //©w
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
+                if (cursol < 0) //è‡ªé™£
                 {
-                    if (cursol >= -18)//ƒLƒƒƒ“ƒv
+                    if (cursol >= -18)//ã‚­ãƒ£ãƒ³ãƒ—
                     {
                         if (cursol == -1 | cursol == -7 | cursol == -13)
                         {
-                            //ƒLƒƒƒ“ƒv¶’[‚Í”„‹p‚Ö
+                            //ã‚­ãƒ£ãƒ³ãƒ—å·¦ç«¯ã¯å£²å´ã¸
                             cursol = -19;
                         }
                         else
@@ -288,30 +310,30 @@ public class StrategyManager : MonoBehaviour
                             cursol += 1;
                         }
                     }
-                    else if (cursol == -19) //”„‹p
+                    else if (cursol == -19) //å£²å´
                     {
-                        //“®‚©‚È‚¢
+                        //å‹•ã‹ãªã„
                     }
-                    else if (cursol == -20) //•åW
+                    else if (cursol == -20) //å‹Ÿé›†
                     {
-                        //ƒLƒƒƒ“ƒv‚Ì‰E‰º‚ÉˆÚ“®‚·‚é
+                        //ã‚­ãƒ£ãƒ³ãƒ—ã®å³ä¸‹ã«ç§»å‹•ã™ã‚‹
                         cursol = -18;
                     }
                     else if (cursol == -21) //GO
                     {
-                        //•åW‚ÉˆÚ“®‚·‚é
+                        //å‹Ÿé›†ã«ç§»å‹•ã™ã‚‹
                         cursol = -20;
                     }
                 }
-                else if (cursol > 0) //íü
+                else if (cursol > 0) //æˆ¦ç·š
                 {
                     if (cursol <= BattleStageManager.Instance.laneLength + 2)
                     {
-                        //ˆê”Ô¶‚Ì—ñ‚Í“®‚©‚È‚¢
+                        //ä¸€ç•ªå·¦ã®åˆ—ã¯å‹•ã‹ãªã„
                     }
                     else
                     {
-                        //ˆê—ñ¶‚ÉˆÚ“®
+                        //ä¸€åˆ—å·¦ã«ç§»å‹•
                         cursol -= BattleStageManager.Instance.laneLength + 2;
                     }
                 }
@@ -323,10 +345,10 @@ public class StrategyManager : MonoBehaviour
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushLeftButton();
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
     }
@@ -335,16 +357,16 @@ public class StrategyManager : MonoBehaviour
         switch (strategyState)
         {
             case StrategyState.Normal:
-            //’Êíó‘Ô
+            //é€šå¸¸çŠ¶æ…‹
             case StrategyState.Having:
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
-                if (cursol < 0) //©w
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
+                if (cursol < 0) //è‡ªé™£
                 {
-                    if (cursol >= -18)//ƒLƒƒƒ“ƒv
+                    if (cursol >= -18)//ã‚­ãƒ£ãƒ³ãƒ—
                     {
                         if (cursol == -6 | cursol == -12 | cursol == -18)
                         {
-                            //ƒLƒƒƒ“ƒv‰E’[‚Í•åW‚Ö
+                            //ã‚­ãƒ£ãƒ³ãƒ—å³ç«¯ã¯å‹Ÿé›†ã¸
                             cursol = -20;
                         }
                         else
@@ -352,30 +374,30 @@ public class StrategyManager : MonoBehaviour
                             cursol -= 1;
                         }
                     }
-                    else if (cursol == -19) //”„‹p
+                    else if (cursol == -19) //å£²å´
                     {
-                        //ƒLƒƒƒ“ƒv‚Ì¶‰º‚ÉˆÚ“®‚·‚é
+                        //ã‚­ãƒ£ãƒ³ãƒ—ã®å·¦ä¸‹ã«ç§»å‹•ã™ã‚‹
                         cursol = -13;
                     }
-                    else if (cursol == -20) //•åW
+                    else if (cursol == -20) //å‹Ÿé›†
                     {
-                        //GO‚ÉˆÚ“®‚·‚é
+                        //GOã«ç§»å‹•ã™ã‚‹
                         cursol = -21;
                     }
                     else if (cursol == -21) //GO
                     {
-                        //ˆÚ“®‚µ‚È‚¢
+                        //ç§»å‹•ã—ãªã„
                     }
                 }
-                else if (cursol > 0) //íü
+                else if (cursol > 0) //æˆ¦ç·š
                 {
                     if (cursol > (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1))
                     {
-                        //ˆê”Ô‰E‚Ì—ñ‚Í“®‚©‚È‚¢
+                        //ä¸€ç•ªå³ã®åˆ—ã¯å‹•ã‹ãªã„
                     }
                     else
                     {
-                        //ˆê—ñ‰E‚ÉˆÚ“®
+                        //ä¸€åˆ—å³ã«ç§»å‹•
                         cursol += BattleStageManager.Instance.laneLength + 2;
                     }
                 }
@@ -387,10 +409,10 @@ public class StrategyManager : MonoBehaviour
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushRightButton();
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
     }
@@ -399,49 +421,49 @@ public class StrategyManager : MonoBehaviour
         switch (strategyState)
         {
             case StrategyState.Normal:
-            //’Êíó‘Ô
+            //é€šå¸¸çŠ¶æ…‹
             case StrategyState.Having:
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
-                if (cursol < 0) //©w
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
+                if (cursol < 0) //è‡ªé™£
                 {
-                    if (cursol >= -18)//ƒLƒƒƒ“ƒv
+                    if (cursol >= -18)//ã‚­ãƒ£ãƒ³ãƒ—
                     {
                         if (cursol >= -6)
                         {
-                            //ƒLƒƒƒ“ƒvã’[‚Ííü‚Ö
+                            //ã‚­ãƒ£ãƒ³ãƒ—ä¸Šç«¯ã¯æˆ¦ç·šã¸
                             cursol = (int)(((cursol * -1.0f) - 1) / (6 - 1) * (BattleStageManager.Instance.laneCount - 1) + 0.5f) * (BattleStageManager.Instance.laneLength + 2) + 1;
                         }
                         else
                         {
-                            //ƒLƒƒƒ“ƒv‚ğˆêsã‚ÉˆÚ“®
+                            //ã‚­ãƒ£ãƒ³ãƒ—ã‚’ä¸€è¡Œä¸Šã«ç§»å‹•
                             cursol += 6;
                         }
                     }
-                    else if (cursol == -19) //”„‹p
+                    else if (cursol == -19) //å£²å´
                     {
-                        //íü‚Ì¶‰º‚ÉˆÚ“®
+                        //æˆ¦ç·šã®å·¦ä¸‹ã«ç§»å‹•
                         cursol = 1;
                     }
-                    else if (cursol == -20) //•åW
+                    else if (cursol == -20) //å‹Ÿé›†
                     {
-                        //íü‚Ì‰E‰º‚ÉˆÚ“®
+                        //æˆ¦ç·šã®å³ä¸‹ã«ç§»å‹•
                         cursol = (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1) + 1;
                     }
                     else if (cursol == -21) //GO
                     {
-                        //íü‚Ì‰E‰º‚ÉˆÚ“®
+                        //æˆ¦ç·šã®å³ä¸‹ã«ç§»å‹•
                         cursol = (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount - 1) + 1;
                     }
                 }
-                else if (cursol > 0) //íü
+                else if (cursol > 0) //æˆ¦ç·š
                 {
                     if (cursol % (BattleStageManager.Instance.laneLength + 2) == 0)
                     {
-                        //ˆê”Ôã‚Ì—ñ‚Í“®‚©‚È‚¢
+                        //ä¸€ç•ªä¸Šã®åˆ—ã¯å‹•ã‹ãªã„
                     }
                     else
                     {
-                        //ˆêsã‚ÉˆÚ“®
+                        //ä¸€è¡Œä¸Šã«ç§»å‹•
                         cursol += 1;
                     }
                 }
@@ -452,10 +474,10 @@ public class StrategyManager : MonoBehaviour
                 BattleStageDisplayManager.Instance.UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
 
@@ -465,46 +487,46 @@ public class StrategyManager : MonoBehaviour
         switch (strategyState)
         {
             case StrategyState.Normal:
-            //’Êíó‘Ô
+            //é€šå¸¸çŠ¶æ…‹
             case StrategyState.Having:
-                //ƒLƒƒƒ‰ƒNƒ^[‚ğŠ‚µ‚½ó‘Ô
-                if (cursol < 0) //©w
+                //ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ‰€æŒã—ãŸçŠ¶æ…‹
+                if (cursol < 0) //è‡ªé™£
                 {
-                    if (cursol >= -18)//ƒLƒƒƒ“ƒv
+                    if (cursol >= -18)//ã‚­ãƒ£ãƒ³ãƒ—
                     {
                         if (cursol <= -13)
                         {
-                            //ƒLƒƒƒ“ƒv‰º’[‚Í“®‚©‚È‚¢
+                            //ã‚­ãƒ£ãƒ³ãƒ—ä¸‹ç«¯ã¯å‹•ã‹ãªã„
                         }
                         else
                         {
-                            //ƒLƒƒƒ“ƒv‚ğˆês‰º‚ÉˆÚ“®
+                            //ã‚­ãƒ£ãƒ³ãƒ—ã‚’ä¸€è¡Œä¸‹ã«ç§»å‹•
                             cursol -= 6;
                         }
                     }
-                    else if (cursol == -19) //”„‹p
+                    else if (cursol == -19) //å£²å´
                     {
-                        //“®‚©‚È‚¢
+                        //å‹•ã‹ãªã„
                     }
-                    else if (cursol == -20) //•åW
+                    else if (cursol == -20) //å‹Ÿé›†
                     {
-                        //“®‚©‚È‚¢
+                        //å‹•ã‹ãªã„
                     }
                     else if (cursol == -21) //GO
                     {
-                        //“®‚©‚È‚¢
+                        //å‹•ã‹ãªã„
                     }
                 }
-                else if (cursol > 0) //íü
+                else if (cursol > 0) //æˆ¦ç·š
                 {
                     if (cursol % (BattleStageManager.Instance.laneLength + 2) == 1)
                     {
-                        //ƒLƒƒƒ“ƒv‚ÉˆÚ“®
+                        //ã‚­ãƒ£ãƒ³ãƒ—ã«ç§»å‹•
                         cursol = (int)((int)(cursol / (BattleStageManager.Instance.laneLength + 2)) * 1.0f / (BattleStageManager.Instance.laneCount - 1) * (6 - 1) + 0.5f) * -1 - 1;
                     }
                     else
                     {
-                        //ˆês‰º‚ÉˆÚ“®
+                        //ä¸€è¡Œä¸‹ã«ç§»å‹•
                         cursol -= 1;
                     }
                 }
@@ -515,10 +537,10 @@ public class StrategyManager : MonoBehaviour
                 BattleStageDisplayManager.Instance.UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
-                //ƒ}[ƒW’†‚Ì‰æ–Ê
+                //ãƒãƒ¼ã‚¸ä¸­ã®ç”»é¢
                 break;
             case StrategyState.Recruiting:
-                //Ì—p’†‚Ì‰æ–Ê
+                //æ¡ç”¨ä¸­ã®ç”»é¢
                 break;
         }
 
@@ -527,7 +549,7 @@ public class StrategyManager : MonoBehaviour
     {
         if (GameManager.Instance.turnState == GameManager.TurnState.Strategy && strategyState == StrategyState.Having)
         {
-            //‚±‚êˆÈ~‚Í’Êí‚Ì”„‹p‚Æ“¯‚¶‚É‚·‚é‚±‚Æ
+            //ã“ã‚Œä»¥é™ã¯é€šå¸¸ã®å£²å´ã¨åŒã˜ã«ã™ã‚‹ã“ã¨
             if (normalCursol < 0)
             {
                 int campIndex = -normalCursol - 1;
@@ -539,7 +561,7 @@ public class StrategyManager : MonoBehaviour
                 BattleStageDisplayManager.Instance.UpdateCursol(cursol);
                 BattleStageDisplayManager.Instance.DeactivateNormalCursol();
             }
-            else if (normalCursol > 0)//ow‘ÎÛ‚Ì‚â‚Â‚È‚Ì‚Å•s‰Â‚Å‚à‚¢‚¢‚©‚àA‰Â”\‚É‚·‚éê‡‚ÍƒLƒƒƒ“ƒv‚à”„‚é
+            else if (normalCursol > 0)//å‡ºé™£å¯¾è±¡ã®ã‚„ã¤ãªã®ã§ä¸å¯ã§ã‚‚ã„ã„ã‹ã‚‚ã€å¯èƒ½ã«ã™ã‚‹å ´åˆã¯ã‚­ãƒ£ãƒ³ãƒ—ã‚‚å£²ã‚‹
             {
                 int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
                 int income = CalcSellPrice(BattleStageManager.Instance.frontline[frontlineIndex]);
