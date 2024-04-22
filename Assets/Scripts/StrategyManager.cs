@@ -205,7 +205,7 @@ public class StrategyManager : MonoBehaviour
                         if (normalCursol<0)
                         {
                             //キャンプ→戦線への移動
-                            
+                            Vector2 targetPos=BattleManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
                         }
                         else if(normalCursol>0)
                         {
