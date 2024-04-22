@@ -5,8 +5,8 @@ using UnityEngine;
 public class BattleStageManager : MonoBehaviour
 {
     public static BattleStageManager Instance;
-    public List<Character> camp = new List<Character>(); //ƒLƒƒƒ“ƒv
-    public List<Character> frontline = new List<Character>(); //íü
+    public List<Character> camp = new List<Character>(); //ã‚­ãƒ£ãƒ³ãƒ—
+    public List<Character> frontline = new List<Character>(); //æˆ¦ç·š
     public int laneCount;
     public int laneLength;
     // Start is called before the first frame update
@@ -52,7 +52,7 @@ public class BattleStageManager : MonoBehaviour
             camp.Add(temp);
         }
     }
-    //ƒLƒƒƒ‰‚ğw’è‚µ‚½ƒJ[ƒ\ƒ‹‚É’Ç‰Á‚·‚éB‹ó‚«‚ª‚È‚©‚Á‚½ê‡‚Í false ‚ğ•Ô‚·
+    //ã‚­ãƒ£ãƒ©ã‚’æŒ‡å®šã—ãŸã‚«ãƒ¼ã‚½ãƒ«ã«è¿½åŠ ã™ã‚‹ã€‚ç©ºããŒãªã‹ã£ãŸå ´åˆã¯ false ã‚’è¿”ã™
     public bool AddCharacterToCamp(Character newCharacter, int cursol)
     {
         if (cursol < 0)
@@ -69,10 +69,10 @@ public class BattleStageManager : MonoBehaviour
         return true;
     }
 
-    //ƒLƒƒƒ“ƒv‚ÉƒLƒƒƒ‰‚ğ’Ç‰Á‚·‚éB‹ó‚«‚ª‚È‚©‚Á‚½ê‡‚Í false ‚ğ•Ô‚·
+    //ã‚­ãƒ£ãƒ³ãƒ—ã«ã‚­ãƒ£ãƒ©ã‚’è¿½åŠ ã™ã‚‹ã€‚ç©ºããŒãªã‹ã£ãŸå ´åˆã¯ false ã‚’è¿”ã™
     public void AddCharacterToCamp(Character newCharacter)
     {
-        //‘¶İ‚µ‚È‚¢ƒLƒƒƒ‰ƒNƒ^[‚ª‚¢‚½Û‚ÉƒXƒe[ƒ^ƒX‚ğ“ü‚ê‘Ö‚¦‚é
+        //å­˜åœ¨ã—ãªã„ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ãŒã„ãŸéš›ã«ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’å…¥ã‚Œæ›¿ãˆã‚‹
         foreach (Character chara in camp)
         {
             if (chara.exists == false)
@@ -81,10 +81,10 @@ public class BattleStageManager : MonoBehaviour
                 chara.SetExists(true);
                 chara.UpdateCharacterStatusInCamp();
                 BattleStageDisplayManager.Instance.RefreshCharacter(chara);
-                return; //’Ç‰Á¬Œ÷
+                return; //è¿½åŠ æˆåŠŸ
             }
         }
-        print("error AddCharacterToCamp"); //’Ç‰Á¸”s
+        print("error AddCharacterToCamp"); //è¿½åŠ å¤±æ•—
     }
     public bool CheckEnableAddCharacter()
     {
@@ -101,12 +101,12 @@ public class BattleStageManager : MonoBehaviour
     {
         if ((campIndex < 0 & frontlineIndex < 0) || (campIndex >= 0 & frontlineIndex >= 0))
         {
-            //—¼•û‚ª—LŒø‚ÈÛ‚Ííœ‚Å‚«‚È‚¢
+            //ä¸¡æ–¹ãŒæœ‰åŠ¹ãªéš›ã¯å‰Šé™¤ã§ããªã„
             return false;
         }
         if (campIndex >= 0)
         {
-            //ƒoƒŠƒf[ƒVƒ‡ƒ“
+            //ãƒãƒªãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³
             if (!camp[campIndex].exists) return false;
             camp[campIndex].SetExists(false);
             camp[campIndex].mass = 0;
@@ -116,7 +116,7 @@ public class BattleStageManager : MonoBehaviour
         }
         else if (frontlineIndex >= 0)
         {
-            //ƒoƒŠƒf[ƒVƒ‡ƒ“
+            //ãƒãƒªãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³
             if (!frontline[frontlineIndex].exists) return false;
             frontline[frontlineIndex].SetExists(false);
             frontline[frontlineIndex].encampment = 0;
@@ -129,14 +129,8 @@ public class BattleStageManager : MonoBehaviour
     {
 
     }
-    public int GetFrontlineIndex(int lane, int mass)
-    {
-        return (lane - 1) * (laneLength + 2) + mass - 1;
-    }
-    //public int GetCampIndex(int index)
-    //{
-    //    return index - 1;
-    //}
+
+    //é™£åœ°é–¢é€£ã®å¤‰æ›
     public int GetCampIndexByCursol(int cursol)
     {
         return -cursol - 1;
@@ -161,15 +155,24 @@ public class BattleStageManager : MonoBehaviour
     {
         return -cursol;
     }
+
+    //æˆ¦ç·šé–¢é€£ã®å¤‰æ›
     public Vector2 GetFrontlineLaneAndMassByCursol(int cursol)
     {
         return new Vector2((int)((cursol - 1) / (laneLength + 2)) + 1, (cursol - 1) % (laneLength + 2) + 1);
+    }
+    public Vector2 GetFrontlineLaneAndMassByFrontlineIndex(int frontlineIndex)
+    {
+        return new Vector2((int)(frontlineIndex/(laneLength+2))+1,frontlineIndex%(laneLength+2)+1);
     }
     public int GetFrontlineIndexByCursol(int cursol)
     {
         return cursol - 1;
     }
-    public int GetCursolByFrontlineIndex(int frontlineIndex)
+    public int GetFrontlineIndexByLaneAndMass(int lane, int mass)
+    {
+        return (lane - 1) * (laneLength + 2) + mass - 1;
+    }    public int GetCursolByFrontlineIndex(int frontlineIndex)
     {
         return frontlineIndex + 1;
     }
@@ -177,4 +180,5 @@ public class BattleStageManager : MonoBehaviour
     {
         return (frontlineLane - 1) * (laneLength + 2) + frontlineMass;
     }
+
 }
