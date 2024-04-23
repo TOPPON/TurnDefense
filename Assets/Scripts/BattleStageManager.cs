@@ -52,6 +52,18 @@ public class BattleStageManager : MonoBehaviour
             camp.Add(temp);
         }
     }
+    public bool AddCharacterToFrontline(Character newCharacter,int lane,int mass)
+    {
+        int frontlineIndex=GetFrontlineIndexByLaneAndMass(lane,mass);
+        if(frontline[frontlineIndex].exists==true)
+        {
+            return false;
+        }
+        frontline[frontlineIndex].SetStatus(newCharacter,true);
+        frontline[frontlineIndex].SetExists(true);
+        BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
+        return true;
+    }
     //キャラを指定したカーソルに追加する。空きがなかった場合は false を返す
     public bool AddCharacterToCamp(Character newCharacter, int cursol)
     {

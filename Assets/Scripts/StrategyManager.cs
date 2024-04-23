@@ -206,6 +206,18 @@ public class StrategyManager : MonoBehaviour
                         {
                             //キャンプ→戦線への移動
                             Vector2 targetPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+                            int normalCampIndex=BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
+                            //ステータスは変える
+                            if(targetPos.y==1)
+                            {
+                                Character normalCampChara=BattleStageManager.Instance.camp[normalCampIndex];
+                                BattleStageManager.Instance.AddCharacterToFrontline(normalCampChara,targetPos.x,targetPos.y);
+                                normalCampChara.charaState=CharaState.Waiting;
+                                normalCampChara.lane=targetPos.x;
+                                normalCampChara.mass=targetPos.y;
+                                int targetFrontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(targetpos.x,targetPos.y);
+                                BattleStageManager.Instance.frontline[targetFrontlineIndex].encampment=normalCampChara.encampment;
+                            }
                         }
                         else if(normalCursol>0)
                         {
@@ -215,10 +227,16 @@ public class StrategyManager : MonoBehaviour
                             if ((targetPos.y==1)&&(normalPos.y==1)&&(cursol!=normalCursol))
                             {
                                 int normalFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
-                                //移動
                                 Character normalFrontlineChara = BattleStageManager.Instance.frontline[normalFrontlineIndex];
                                 int normalFrontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalFrontlineChara.encampment);
                                 Character normalFrontlineWaitingChara = BattleStageManager.Instance.camp[normalFrontlineWaitingIndex];
+                                //移動
+                                BattleStageManager.Instance.AddCharacterToFrontline(normalCursolChara, targetPos.x,targetPos.y);
+                                BattleStageManager.Instance.RemoveCharacter(-1,normalFrontlineIndex);
+                                FinishHaving();
+                                //Waiting側の示す位置を変更する
+                                normalFrontlineWaitingChara.lane=targetPos.x;
+                                normalFrontlineWaitingChara.mass=targetPos.y;
                             }
                         }
                     }
