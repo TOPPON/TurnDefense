@@ -199,24 +199,26 @@ public class StrategyManager : MonoBehaviour
                 else if (cursol > 0)
                 {
                     int frontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
-                    Character target=BattleManager.Instance.frontline[frontlineIndex];
+                    Character target=BattleStageManager.Instance.frontline[frontlineIndex];
                     if(!target.exists)
                     {
                         if (normalCursol<0)
                         {
                             //キャンプ→戦線への移動
-                            Vector2 targetPos=BattleManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+                            Vector2 targetPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
                         }
                         else if(normalCursol>0)
                         {
                             //戦線→戦線の移動
-                            Vector2 targetPos=BattleManager.Instance.GetLaneAndMassByCursol(cursol);
-                            Vector2 normalPos=BattleManager.Instance.GetLaneAndMassByCursol(normalCursol);
-                            if (targetPos.y==1&&normalPos.y==1&&cursol！=normalCursol)
+                            Vector2 targetPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+                            Vector2 normalPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(normalCursol);
+                            if ((targetPos.y==1)&&(normalPos.y==1)&&(cursol!=normalCursol))
                             {
+                                int normalFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
                                 //移動
-                                Character normalFrontlineChara=BattleStageManager.
-                                Character frontlineWaitingChara=
+                                Character normalFrontlineChara = BattleStageManager.Instance.frontline[normalFrontlineIndex];
+                                int normalFrontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalFrontlineChara.encampment);
+                                Character normalFrontlineWaitingChara = BattleStageManager.Instance.camp[normalFrontlineWaitingIndex];
                             }
                         }
                     }
