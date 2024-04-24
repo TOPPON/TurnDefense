@@ -89,6 +89,7 @@ public class BattleStageDisplayManager : MonoBehaviour
     {
 
         int cursol = 0;
+        print(character.charaState);
         switch (character.charaState)
         {
             case Character.CharaState.None:
@@ -132,6 +133,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                             }
                         }
                     }
+                    dc.SetAll(cursol,character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState);
                     return;
                 }
             }

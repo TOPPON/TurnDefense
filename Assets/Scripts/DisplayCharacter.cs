@@ -32,15 +32,16 @@ public class DisplayCharacter : MonoBehaviour
         this.cursol = cursol;
         gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
         gameObject.GetComponent<Image>().sprite = GetDisplayCharacterByType(charaType);
-        rarityText.text = "��"+rarity.ToString();
+        rarityText.text = "星"+rarity.ToString();
         waitingDisplay.SetActive(false);
         reviveDisplay.SetActive(false);
         switch(charaState)
         {
-            case Character.charaState.Waiting:
+            case Character.CharaState.Waiting:
+                print("waiting");
                 waitingDisplay.SetActive(true);
                 break;
-            case Character.charaState.Death:
+            case Character.CharaState.Death:
                 if (reviveTurn>0)//�c��^�[����1�ȏ�̂Ƃ�
                 {
                     reviveDisplay.SetActive(true);
@@ -50,11 +51,6 @@ public class DisplayCharacter : MonoBehaviour
                 break;
         }
         print("reviveTurn:"+reviveTurn);
-        
-        else
-        {
-            reviveDisplay.SetActive(false);
-        }
             
     }
     public static Sprite GetDisplayCharacterByType(int charaType)

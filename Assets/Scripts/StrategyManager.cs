@@ -37,6 +37,7 @@ public class StrategyManager : MonoBehaviour
         //cursol = normalCursol;
         //BattleStageDisplayManager.Instance.UpdateCursol(cursol);
         BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+        UpdateCursol(cursol);
     }
     public void FinishRecruite()
     {
@@ -48,6 +49,32 @@ public class StrategyManager : MonoBehaviour
         //cursol = normalCursol;
         //BattleStageDisplayManager.Instance.UpdateCursol(cursol);
         BattleStageDisplayManager.Instance.DeactivateNormalCursol();
+    }
+    public void UpdateCursol(int cursol)
+    {
+        if (cursol < 0)
+        {
+            if (cursol >= -18)
+            {
+                int campIndex = BattleStageManager.Instance.GetCampIndexByCursol(cursol);
+                BattleInformationDisplayManager.Instance.RefreshCharacterStatusDisplay(BattleStageManager.Instance.camp[campIndex]);
+            }
+            else
+            {
+                BattleInformationDisplayManager.Instance.RefreshCharacterStatusDisplay(null,true);
+            }
+        }
+        else if (cursol > 0)
+        {
+            int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
+            BattleInformationDisplayManager.Instance.RefreshCharacterStatusDisplay(BattleStageManager.Instance.frontline[frontlineIndex]);
+        }
+        else
+        {
+            BattleInformationDisplayManager.Instance.RefreshCharacterStatusDisplay(null, true);
+            print("error! invalid cursol:" + cursol);
+        }
+        BattleStageDisplayManager.Instance.UpdateCursol(cursol);
     }
     public int CalcSellPrice(Character target)
     {
@@ -136,15 +163,16 @@ public class StrategyManager : MonoBehaviour
                         BattleStageManager.Instance.RemoveCharacter(campIndex, -1);
                         FinishHaving();
                         cursol = normalCursol;
-                        BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                        UpdateCursol(cursol);
                     }
                     else if (normalCursol > 0)//出陣対象のやつなので不可でもいいかも、可能にする場合はキャンプも売る
                     {
+                        /*
                         int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
                         int income = CalcSellPrice(BattleStageManager.Instance.frontline[frontlineIndex]);
                         GameManager.Instance.AddMoney(income);
                         BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
-                        FinishHaving();
+                        FinishHaving();*/
                     }
                 }
                 else if (cursol < 0)
@@ -155,38 +183,48 @@ public class StrategyManager : MonoBehaviour
                     if (!target.exists)
                     {
                         Character normalCursolChara;
-                        if (normalCursol > 0)//戦線の場合
-                        {
-                            //戦線側のキャラクター取得
-                            int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
-                            normalCursolChara = BattleStageManager.Instance.frontline[frontlineIndex];
-                            //キャンプで待っている人も削除する必要がある
-                            int frontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalCursolChara.encampment);
-                            //Character normalCursolWaitingChara = BattleStageManager.Instance.camp[frontlineWaitingIndex];
-                            BattleStageManager.Instance.RemoveCharacter(frontlineWaitingIndex, -1);
-                            BattleStageManager.Instance.AddCharacterToCamp(normalCursolChara, campIndex);
-                            BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
-                            FinishHaving();
-                        }
-                        else //キャンプの場合
+                        if (normalCursol < 0)
                         {
                             int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
                             normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
                             BattleStageManager.Instance.AddCharacterToCamp(normalCursolChara, campIndex);
                             BattleStageManager.Instance.RemoveCharacter(normalCampIndex, -1);
                             FinishHaving();
+                            UpdateCursol(cursol);
                         }
                     }
                     else // 誰かがいた場合
                     {
                         if (cursol == normalCursol) break;
                         Character normalCursolChara;
-                        Character havingChara= BattleStageManager.Instance.camp[campIndex];
+                        Character havingChara = BattleStageManager.Instance.camp[campIndex];
+                        if (normalCursol > 0)
+                        {
+                            int normalFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
+                            normalCursolChara = BattleStageManager.Instance.frontline[normalFrontlineIndex];
+                            if (normalCursolChara.encampment == havingChara.encampment && normalCursolChara.lane == havingChara.lane && normalCursolChara.mass == havingChara.mass)
+                            {
+                                BattleStageManager.Instance.RemoveCharacter(-1, normalFrontlineIndex);
+                                havingChara.lane = 0;
+                                havingChara.mass = 0;
+                                if (havingChara.encampment <= 12)//Ally
+                                {
+                                    havingChara.charaState = Character.CharaState.Ally;
+                                    BattleStageDisplayManager.Instance.RefreshCharacter(havingChara);
+                                }
+                                else
+                                {
+                                    print("error!invalid encampment:" + havingChara.encampment);
+                                }
+                                FinishHaving();
+                                UpdateCursol(cursol);
+                            }
+                        }
                         if (normalCursol < 0) //キャンプの場合
                         {
                             int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
                             normalCursolChara = BattleStageManager.Instance.camp[normalCampIndex];
-                            if (havingChara.rarity == normalCursolChara.rarity && havingChara.rarity <= 4)
+                            if (havingChara.rarity == normalCursolChara.rarity && havingChara.rarity <= 4 && (havingChara.charaState == Character.CharaState.Ally || havingChara.charaState == Character.CharaState.Reserve))
                             {
                                 //マージ画面へ
                                 MergeManager.Instance.Activate(normalCursolChara, havingChara);
@@ -198,52 +236,62 @@ public class StrategyManager : MonoBehaviour
                 }
                 else if (cursol > 0)
                 {
-                    int frontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
-                    Character target=BattleStageManager.Instance.frontline[frontlineIndex];
-                    if(!target.exists)
+                    int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
+                    Character target = BattleStageManager.Instance.frontline[frontlineIndex];
+                    if (!target.exists)
                     {
-                        if (normalCursol<0)
+                        if (normalCursol < 0)
                         {
                             //キャンプ→戦線への移動
-                            Vector2 targetPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
-                            int normalCampIndex=BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
+                            Vector2 targetPos = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+                            int normalCampIndex = BattleStageManager.Instance.GetCampIndexByCursol(normalCursol);
                             //ステータスは変える
-                            if(targetPos.y==1)
+                            if (targetPos.y == 1 && BattleStageManager.Instance.GetEncampmentByCampIndex(normalCampIndex) <= 12)
                             {
-                                Character normalCampChara=BattleStageManager.Instance.camp[normalCampIndex];
+                                Character normalCampChara = BattleStageManager.Instance.camp[normalCampIndex];
+                                //一瞬コピーのために戦線に出向く
+                                normalCampChara.charaState = Character.CharaState.Frontline;
                                 //ステータスは待っている側のキャラをベースに作成する
-                                BattleStageManager.Instance.AddCharacterToFrontline(normalCampChara,targetPos.x,targetPos.y);
+                                BattleStageManager.Instance.AddCharacterToFrontline(normalCampChara, (int)targetPos.x, (int)targetPos.y);
                                 //待っている側のキャラのステータスを設定
-                                normalCampChara.charaState=CharaState.Waiting;
-                                normalCampChara.lane=targetPos.x;
-                                normalCampChara.mass=targetPos.y;
+                                normalCampChara.charaState = Character.CharaState.Waiting;
+                                normalCampChara.lane = (int)targetPos.x;
+                                normalCampChara.mass = (int)targetPos.y;
+                                BattleStageDisplayManager.Instance.RefreshCharacter(normalCampChara);
 
                                 //int targetFrontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(targetpos.x,targetPos.y);
                                 //出陣側のキャラを設定
                                 //targetは使えるの？使えそう
-                                target.encampment=normalCampChara.encampment;
-                                target.charaState=Character.CharaState.Frontline;
+                                target.encampment = normalCampChara.encampment;
+                                target.charaState = Character.CharaState.Frontline;
                                 //BattleStageManager.Instance.frontline[targetFrontlineIndex].encampment=normalCampChara.encampment;
+                                FinishHaving();
+                                UpdateCursol(cursol);
                             }
                         }
-                        else if(normalCursol>0)
+                        else if (normalCursol > 0)
                         {
                             //戦線→戦線の移動
-                            Vector2 targetPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
-                            Vector2 normalPos=BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(normalCursol);
-                            if ((targetPos.y==1)&&(normalPos.y==1)&&(cursol!=normalCursol))
+                            Vector2 targetPos = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+                            Vector2 normalPos = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(normalCursol);
+                            if ((targetPos.y == 1) && (normalPos.y == 1) && (cursol != normalCursol))
                             {
                                 int normalFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
                                 Character normalFrontlineChara = BattleStageManager.Instance.frontline[normalFrontlineIndex];
                                 int normalFrontlineWaitingIndex = BattleStageManager.Instance.GetCampIndexByEncampment(normalFrontlineChara.encampment);
                                 Character normalFrontlineWaitingChara = BattleStageManager.Instance.camp[normalFrontlineWaitingIndex];
                                 //移動
-                                BattleStageManager.Instance.AddCharacterToFrontline(normalCursolChara, targetPos.x,targetPos.y);
-                                BattleStageManager.Instance.RemoveCharacter(-1,normalFrontlineIndex);
-                                FinishHaving();
+                                BattleStageManager.Instance.AddCharacterToFrontline(normalFrontlineChara, (int)targetPos.x, (int)targetPos.y);
+
+                                //
+                                int targetFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(cursol);
+                                BattleStageManager.Instance.frontline[targetFrontlineIndex].encampment = normalFrontlineChara.encampment;
+                                BattleStageManager.Instance.RemoveCharacter(-1, normalFrontlineIndex);
                                 //Waiting側の示す位置を変更する
-                                normalFrontlineWaitingChara.lane=targetPos.x;
-                                normalFrontlineWaitingChara.mass=targetPos.y;
+                                normalFrontlineWaitingChara.lane = (int)targetPos.x;
+                                normalFrontlineWaitingChara.mass = (int)targetPos.y;
+                                FinishHaving();
+                                UpdateCursol(cursol);
                             }
                         }
                     }
@@ -300,7 +348,7 @@ public class StrategyManager : MonoBehaviour
             case StrategyState.Having:
                 FinishHaving();
                 cursol = normalCursol;
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 //キャラとカーソルを戻す
                 //キャラクターを所持した状態
                 break;
@@ -368,7 +416,7 @@ public class StrategyManager : MonoBehaviour
                 {
                     print("error! invalid cursol");
                 }
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushLeftButton();
@@ -432,7 +480,7 @@ public class StrategyManager : MonoBehaviour
                 {
                     print("error! invalid cursol");
                 }
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
                 MergeManager.Instance.PushRightButton();
@@ -498,7 +546,7 @@ public class StrategyManager : MonoBehaviour
                 {
                     print("error! invalid cursol");
                 }
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
                 //マージ中の画面
@@ -561,7 +609,7 @@ public class StrategyManager : MonoBehaviour
                 {
                     print("error! invalid cursol");
                 }
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 break;
             case StrategyState.Merging:
                 //マージ中の画面
@@ -570,7 +618,6 @@ public class StrategyManager : MonoBehaviour
                 //採用中の画面
                 break;
         }
-
     }
     public void PushSellButton()
     {
@@ -585,7 +632,7 @@ public class StrategyManager : MonoBehaviour
                 BattleStageManager.Instance.RemoveCharacter(campIndex, -1);
                 strategyState = StrategyState.Normal;
                 cursol = normalCursol;
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 BattleStageDisplayManager.Instance.DeactivateNormalCursol();
             }
             else if (normalCursol > 0)//出陣対象のやつなので不可でもいいかも、可能にする場合はキャンプも売る
@@ -596,7 +643,7 @@ public class StrategyManager : MonoBehaviour
                 BattleStageManager.Instance.RemoveCharacter(-1, frontlineIndex);
                 strategyState = StrategyState.Normal;
                 cursol = normalCursol;
-                BattleStageDisplayManager.Instance.UpdateCursol(cursol);
+                UpdateCursol(cursol);
                 BattleStageDisplayManager.Instance.DeactivateNormalCursol();
             }
         }
