@@ -6,12 +6,13 @@ using UnityEngine.UI;
 
 public class DisplayCharacter : MonoBehaviour
 {
-    public int cursol; //BattleStage ‚Ì cursol ‚É‘Î‰‚·‚é
-    public int charaType; //ˆê’UƒLƒƒƒ‰‚ÌƒXƒLƒ‹‚Æ“¯ˆê
-    public int reviveTurn; //•œŠˆ‚Ü‚Å‚É‚ ‚Æ‰½ƒ^[ƒ“•K—v‚©
-    public int reviveMaxTurn; //•œŠˆ‚Ü‚Å‚É‰½ƒ^[ƒ“•K—v‚©
-    public int rarity; // ƒŒƒAƒŠƒeƒB
+    public int cursol; //BattleStage ï¿½ï¿½ cursol ï¿½É‘Î‰ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int charaType; //ï¿½ï¿½Uï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½ÌƒXï¿½Lï¿½ï¿½ï¿½Æ“ï¿½ï¿½ï¿½
+    public int reviveTurn; //ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚É‚ï¿½ï¿½Æ‰ï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½Kï¿½vï¿½ï¿½
+    public int reviveMaxTurn; //ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚É‰ï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½Kï¿½vï¿½ï¿½
+    public int rarity; // ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½eï¿½B
     public Character.CharaState displayCharaState;
+    [SerializeField] GameObject waitingDisplay;
     [SerializeField] GameObject reviveDisplay;
     [SerializeField] Image reviveRollingDisplay;
     [SerializeField] TextMeshProUGUI reviveTurnText;
@@ -31,23 +32,25 @@ public class DisplayCharacter : MonoBehaviour
         this.cursol = cursol;
         gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
         gameObject.GetComponent<Image>().sprite = GetDisplayCharacterByType(charaType);
-        /*switch (charaType)
+        rarityText.text = "ï¿½ï¿½"+rarity.ToString();
+        waitingDisplay.SetActive(false);
+        reviveDisplay.SetActive(false);
+        switch(charaState)
         {
-            case 0:
-                gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/character_kishi_man_02_green_black");
+            case Character.charaState.Waiting:
+                waitingDisplay.SetActive(true);
                 break;
-            case 1:
-                gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/character_uranaishi_01");
+            case Character.charaState.Death:
+                if (reviveTurn>0)//ï¿½cï¿½ï¿½^ï¿½[ï¿½ï¿½ï¿½ï¿½1ï¿½Èï¿½Ì‚Æ‚ï¿½
+                {
+                    reviveDisplay.SetActive(true);
+                    reviveRollingDisplay.fillAmount = 1.0f * reviveTurn / reviveMaxTurn;
+                    reviveTurnText.text = reviveTurn.ToString();
+                }
                 break;
-        }*/
-        rarityText.text = "¯"+rarity.ToString();
-        print("reviveTurn:"+reviveTurn);
-        if (reviveTurn>0)//c‚èƒ^[ƒ“‚ª1ˆÈã‚Ì‚Æ‚«
-        {
-            reviveDisplay.SetActive(true);
-            reviveRollingDisplay.fillAmount = 1.0f * reviveTurn / reviveMaxTurn;
-            reviveTurnText.text = reviveTurn.ToString();
         }
+        print("reviveTurn:"+reviveTurn);
+        
         else
         {
             reviveDisplay.SetActive(false);
