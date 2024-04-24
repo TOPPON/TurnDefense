@@ -211,12 +211,19 @@ public class StrategyManager : MonoBehaviour
                             if(targetPos.y==1)
                             {
                                 Character normalCampChara=BattleStageManager.Instance.camp[normalCampIndex];
+                                //ステータスは待っている側のキャラをベースに作成する
                                 BattleStageManager.Instance.AddCharacterToFrontline(normalCampChara,targetPos.x,targetPos.y);
+                                //待っている側のキャラのステータスを設定
                                 normalCampChara.charaState=CharaState.Waiting;
                                 normalCampChara.lane=targetPos.x;
                                 normalCampChara.mass=targetPos.y;
-                                int targetFrontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(targetpos.x,targetPos.y);
-                                BattleStageManager.Instance.frontline[targetFrontlineIndex].encampment=normalCampChara.encampment;
+
+                                //int targetFrontlineIndex=BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(targetpos.x,targetPos.y);
+                                //出陣側のキャラを設定
+                                //targetは使えるの？使えそう
+                                target.encampment=normalCampChara.encampment;
+                                target.charaState=Character.CharaState.Frontline;
+                                //BattleStageManager.Instance.frontline[targetFrontlineIndex].encampment=normalCampChara.encampment;
                             }
                         }
                         else if(normalCursol>0)
