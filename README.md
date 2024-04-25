@@ -30,6 +30,7 @@ encampment：1～18
 mass,lane：１～
 exists：true
 reviveTurn：0
+
 陣地のやつ
 CharaState：Waiting
 encampment：1～18(戦線と同じものを指定)
