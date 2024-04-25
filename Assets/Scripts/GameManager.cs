@@ -52,10 +52,13 @@ public class GameManager : MonoBehaviour
             case TurnState.BeforeMarch:
                 // 各キャラが行動を決める
                 turnState = TurnState.March;
+                // メモ：Character に次の行動それぞれメモしてもいいかも。Character.Action Character.nextAction=Wait,Battle,Skill,
+                // 横に移動するキャラはどうしようね
                 break;
             case TurnState.March:
                 // 実際に行動
                 turnState = TurnState.AfterMarch;
+
                 break;
             case TurnState.AfterMarch:
                 // クリア条件などを計算

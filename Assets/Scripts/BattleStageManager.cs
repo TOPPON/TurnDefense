@@ -52,14 +52,14 @@ public class BattleStageManager : MonoBehaviour
             camp.Add(temp);
         }
     }
-    public bool AddCharacterToFrontline(Character newCharacter,int lane,int mass)
+    public bool AddCharacterToFrontline(Character newCharacter, int lane, int mass)
     {
-        int frontlineIndex=GetFrontlineIndexByLaneAndMass(lane,mass);
-        if(frontline[frontlineIndex].exists==true)
+        int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
+        if (frontline[frontlineIndex].exists == true)
         {
             return false;
         }
-        frontline[frontlineIndex].SetStatus(newCharacter,true);
+        frontline[frontlineIndex].SetStatus(newCharacter, true);
         frontline[frontlineIndex].SetExists(true);
         BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
         return true;
@@ -175,7 +175,7 @@ public class BattleStageManager : MonoBehaviour
     }
     public Vector2 GetFrontlineLaneAndMassByFrontlineIndex(int frontlineIndex)
     {
-        return new Vector2((int)(frontlineIndex/(laneLength+2))+1,frontlineIndex%(laneLength+2)+1);
+        return new Vector2((int)(frontlineIndex / (laneLength + 2)) + 1, frontlineIndex % (laneLength + 2) + 1);
     }
     public int GetFrontlineIndexByCursol(int cursol)
     {
@@ -184,7 +184,8 @@ public class BattleStageManager : MonoBehaviour
     public int GetFrontlineIndexByLaneAndMass(int lane, int mass)
     {
         return (lane - 1) * (laneLength + 2) + mass - 1;
-    }    public int GetCursolByFrontlineIndex(int frontlineIndex)
+    }
+    public int GetCursolByFrontlineIndex(int frontlineIndex)
     {
         return frontlineIndex + 1;
     }
@@ -192,5 +193,43 @@ public class BattleStageManager : MonoBehaviour
     {
         return (frontlineLane - 1) * (laneLength + 2) + frontlineMass;
     }
+    //
+    public void FrontlineCharacterMove(Character target, int xVec = 0, int yVec = 1)
+    {
+        int lane = target.lane;
+        int mass = target.mass;
+        int encampment = target.encampment;
 
+        int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
+        Character frontlineCharacter = frontline[frontlineIndex];
+        int aheadLane = lane + xVec;
+        int aheadMass = mass + yVec;
+        if (aheadLane > laneCount)
+        {
+            print("laneが上限を超えた");
+            aheadLane = laneCount;
+        }
+        if (aheadLane < 1)
+        {
+            print("laneが下限を下回った");
+            aheadLane = 1;
+        }
+        if (aheadMass > laneLength + 2)
+        {
+            print("massが上限を超えた");
+            aheadMass = laneLength + 2;
+        }
+        if (aheadMass < 1)
+        {
+            print("massが下限を下回った");
+            aheadMass = 1;
+        }
+        AddCharacterToFrontline(frontlineCharacter, aheadLane, aheadMass);
+        RemoveCharacter(-1, frontlineIndex);
+
+        int campIndex = GetCampIndexByEncampment(encampment);
+        Character waitingCharacter = camp[campIndex];
+        waitingCharacter.lane = aheadLane;
+        waitingCharacter.mass = aheadMass;
+    }
 }
