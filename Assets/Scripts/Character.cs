@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
     public int reviveTurn; //復活までにあと何ターン必要か
     public int reviveMaxTurn; //復活までに何ターン必要か
     public bool exists;//実在するか否か
+
     public enum CharaState
     {
         None,
@@ -32,6 +33,16 @@ public class Character : MonoBehaviour
         Enemy
     }
     public CharaState charaState; //キャラクターの状態
+
+    public enum CharaAction
+    {
+        None,
+        Waiting,
+        Ahead,
+        Skill,
+        Attack
+    }
+    public CharaAction nextAction;
     // Start is called before the first frame update
     void Start()
     {
@@ -65,6 +76,7 @@ public class Character : MonoBehaviour
         charaState = targetCharacter.charaState;
         reviveTurn = targetCharacter.reviveTurn; //復活までにあと何ターン必要か
         reviveMaxTurn = targetCharacter.reviveMaxTurn; //復活までに何ターン必要か
+        nextAction = targetCharacter.nextAction;
     }
     public void SetExists(bool exists)
     {
