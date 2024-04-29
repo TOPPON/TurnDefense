@@ -51,7 +51,8 @@ public class GameManager : MonoBehaviour
                 break;
             case TurnState.BeforeMarch:
                 // 各キャラが行動を決める
-                turnState = TurnState.March;
+                //turnState = TurnState.March;
+                MarchManager.Instance.UpdateMarchPlan();
                 // メモ：Character に次の行動それぞれメモしてもいいかも。Character.Action Character.nextAction=Wait,Battle,Skill,
                 // 横に移動するキャラはどうしようね
                 break;
@@ -110,6 +111,17 @@ public class GameManager : MonoBehaviour
         }
         money = value;
         BattleInformationDisplayManager.Instance.RefreshMoneyText(money);
+    }
+    public void CompleteMarchPlan()
+    {
+        if (turnState == TurnState.BeforeMarch)
+        {
+            turnState = TurnState.March;
+        }
+        else
+        {
+            print("error! invalid turnState:" + turnState);
+        }
     }
 
     public void Activate()

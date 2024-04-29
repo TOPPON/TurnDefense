@@ -36,7 +36,7 @@ public class Character : MonoBehaviour
 
     public enum CharaAction
     {
-        None,
+        None,//s“®Ï‚à‚±‚ê
         Waiting,
         Ahead,
         Skill,
