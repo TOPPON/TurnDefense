@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
         AfterStrategy,
         BeforeMarch,
         March,
+        EnemyMarch,
         AfterMarch,
         Pause
     }
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
                 break;
             case TurnState.AfterStrategy:
                 turnState = TurnState.BeforeMarch;
+                MarchManager.Instance.StartMarchPlan();
                 break;
             case TurnState.BeforeMarch:
                 // 各キャラが行動を決める
@@ -58,8 +60,12 @@ public class GameManager : MonoBehaviour
                 break;
             case TurnState.March:
                 // 実際に行動
-                turnState = TurnState.AfterMarch;
+                MarchManager.Instance.UpdateDoMarch();
+                //turnState = TurnState.AfterMarch;
 
+                break;
+            case TurnState.EnemyMarch:
+                MarchManager.Instance.UpdateDoMarchEnemy();
                 break;
             case TurnState.AfterMarch:
                 // クリア条件などを計算
@@ -117,6 +123,30 @@ public class GameManager : MonoBehaviour
         if (turnState == TurnState.BeforeMarch)
         {
             turnState = TurnState.March;
+            MarchManager.Instance.StartDoMarch();
+        }
+        else
+        {
+            print("error! invalid turnState:" + turnState);
+        }
+    }
+    public void CompleteDoMarch()
+    {
+        if (turnState == TurnState.March)
+        {
+            turnState = TurnState.EnemyMarch;
+            MarchManager.Instance.StartDoMarchEnemy();
+        }
+        else
+        {
+            print("error! invalid turnState:" + turnState);
+        }
+    }
+    public void CompleteDoMarchEnemy()
+    {
+        if (turnState == TurnState.EnemyMarch)
+        {
+            turnState = TurnState.AfterMarch;
         }
         else
         {

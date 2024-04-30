@@ -26,8 +26,8 @@ public class BattleStageManager : MonoBehaviour
     }
     public void Activate()
     {
-        laneCount = Random.Range(3, 8);
-        laneLength = Random.Range(5, 12);
+        laneCount = 2;// Random.Range(3, 8);
+        laneLength = 3;// Random.Range(5, 12);
         BattleStageDisplayManager.Instance.SetLaneAndMass(laneCount, laneLength);
         BattleStageDisplayManager.Instance.UpdateCursol(-1);
         for (int i = 0; i < laneCount; i++)
@@ -199,6 +199,7 @@ public class BattleStageManager : MonoBehaviour
         int lane = target.lane;
         int mass = target.mass;
         int encampment = target.encampment;
+        print("baseEncampment:" + encampment);
 
         int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
         Character frontlineCharacter = frontline[frontlineIndex];
@@ -227,9 +228,12 @@ public class BattleStageManager : MonoBehaviour
         AddCharacterToFrontline(frontlineCharacter, aheadLane, aheadMass);
         RemoveCharacter(-1, frontlineIndex);
 
+        int newFrontlineIndex= GetFrontlineIndexByLaneAndMass(aheadLane, aheadMass);
+        BattleStageManager.Instance.frontline[newFrontlineIndex].encampment = encampment;
         int campIndex = GetCampIndexByEncampment(encampment);
         Character waitingCharacter = camp[campIndex];
         waitingCharacter.lane = aheadLane;
         waitingCharacter.mass = aheadMass;
+        print("waiting.encampment:" + waitingCharacter.encampment);
     }
 }

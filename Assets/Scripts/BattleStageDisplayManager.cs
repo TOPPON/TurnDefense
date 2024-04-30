@@ -87,9 +87,7 @@ public class BattleStageDisplayManager : MonoBehaviour
     }
     public void RefreshCharacter(Character character)
     {
-
         int cursol = 0;
-        print(character.charaState);
         switch (character.charaState)
         {
             case Character.CharaState.None:

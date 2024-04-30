@@ -14,8 +14,8 @@ public class MarchManager : MonoBehaviour
         }
         else Destroy(gameObject);
     }
-    int lanesCursol = 1;
-    int massCursol = BattleStageManager.Instance.laneLength + 2;
+    int lanesCursol;
+    int massCursol;
 
     //行動済みの範囲を抑えるためだけのリスト
     List<int> frontlinePlanningList = new List<int>();
@@ -25,13 +25,23 @@ public class MarchManager : MonoBehaviour
     }
     public void StartMarchPlan()
     {
-        lanesCursol = 1;
+        lanesCursol = 0;
         massCursol = BattleStageManager.Instance.laneLength + 2;
         frontlinePlanningList.Clear();
         for (int i = 0; i < (BattleStageManager.Instance.laneLength + 2) * (BattleStageManager.Instance.laneCount); i++)
         {
             frontlinePlanningList.Add(0);
         }
+    }
+    public void StartDoMarch()
+    {
+        lanesCursol = 0;
+        massCursol = BattleStageManager.Instance.laneLength + 2;
+    }
+    public void StartDoMarchEnemy()
+    {
+        lanesCursol = 0;
+        massCursol = BattleStageManager.Instance.laneLength + 2;
     }
     public void UpdateMarchPlan()
     {
@@ -44,11 +54,71 @@ public class MarchManager : MonoBehaviour
             if (massCursol < 1)
             {
                 GameManager.Instance.CompleteMarchPlan();
+                return;
             }
         }
         int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
         Character target = BattleStageManager.Instance.frontline[frontlineIndex];
         DecideNextAction(target);
+    }
+    public void UpdateDoMarch()
+    {
+        //上から順に確認して行動を決めていく
+        lanesCursol++;
+        if (lanesCursol > BattleStageManager.Instance.laneCount)
+        {
+            lanesCursol -= BattleStageManager.Instance.laneCount;
+            massCursol--;
+            if (massCursol < 1)
+            {
+                GameManager.Instance.CompleteDoMarch();
+                return;
+            }
+        }
+        int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
+        Character target = BattleStageManager.Instance.frontline[frontlineIndex];
+        if (!target.exists) return;
+        if (target.charaState == Character.CharaState.Enemy) return;
+        switch (target.nextAction)
+        {
+            case Character.CharaAction.Attack:
+                DoAttack(target);
+                break;
+            case Character.CharaAction.Ahead:
+                DoAhead(target);
+                break;
+            case Character.CharaAction.Waiting:
+                target.nextAction = Character.CharaAction.None;
+                break;
+        }
+    }
+    public void UpdateDoMarchEnemy()
+    {
+        //上から順に確認して行動を決めていく
+        lanesCursol++;
+        if (lanesCursol > BattleStageManager.Instance.laneCount)
+        {
+            lanesCursol -= BattleStageManager.Instance.laneCount;
+            massCursol--;
+            if (massCursol < 1)
+            {
+                GameManager.Instance.CompleteDoMarchEnemy();
+                return;
+            }
+        }
+        int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
+        Character enemy = BattleStageManager.Instance.frontline[frontlineIndex];
+        if (!enemy.exists) return;
+        if (enemy.charaState != Character.CharaState.Enemy) return;
+        switch (enemy.nextAction)
+        {
+            case Character.CharaAction.Attack:
+                break;
+            case Character.CharaAction.Ahead:
+                break;
+            case Character.CharaAction.Waiting:
+                break;
+        }
     }
     public void DecideNextAction(Character target)
     {
@@ -60,9 +130,11 @@ public class MarchManager : MonoBehaviour
         int mass = target.mass;
         int targetFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass);
         //二ます先までに敵がいたらAttack
-        if (mass >= BattleStageManager.Instance.laneLength + 2)//ゴールますと一致の場合、Attackはない
+        if (mass >= BattleStageManager.Instance.laneLength + 2)//ゴールますと一致の場合、AttackもAheadもないためいったんWaiting確定
         {
-
+            target.nextAction = Character.CharaAction.Waiting;
+            frontlinePlanningList[targetFrontlineIndex] = 4;
+            return;
         }
         else if (mass + 1 >= BattleStageManager.Instance.laneLength + 2)//ゴールますより一マス下の場合
         {
@@ -121,13 +193,19 @@ public class MarchManager : MonoBehaviour
         {
             frontlinePlanningList[aheadPlanMassIndex] = 2;
             target.nextAction = Character.CharaAction.Ahead;
+            return;
         }
 
         //スキルを発動するという手もありますね
 
+
+        //何もなかったら待機
+        target.nextAction = Character.CharaAction.Waiting;
+        frontlinePlanningList[targetFrontlineIndex] = 4;
     }
     public void DoAhead(Character target)
     {
+        BattleStageManager.Instance.FrontlineCharacterMove(target);
         //歩いたので完了にする
         target.nextAction = Character.CharaAction.None;
     }
@@ -137,5 +215,6 @@ public class MarchManager : MonoBehaviour
     }
     public void DoAttack(Character target)
     {
+        target.nextAction = Character.CharaAction.None;
     }
 }
