@@ -29,7 +29,7 @@ public class StrategyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Todo: Update が各 State の時だけ動くようにする
     }
     public void FinishMerge()
     {

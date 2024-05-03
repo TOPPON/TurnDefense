@@ -69,6 +69,10 @@ public class AttackAnimationDisplayManager : MonoBehaviour
         EnemyHpBar.fillAmount = 1.0f * nowHp / maxHp;
         EnemyHpBarText.text = nowHp.ToString() + " / " + maxHp.ToString();
     }
+    public void UpdateTimeGage(float nowValue)
+    {
+        TimeGage.fillAmount = nowValue;
+    }
     public void UpdateAllySpdBar(float nowValue)
     {
         AllySpdBar.fillAmount = nowValue;
