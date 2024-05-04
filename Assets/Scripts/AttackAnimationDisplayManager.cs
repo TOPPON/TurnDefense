@@ -7,7 +7,7 @@ using TMPro;
 public class AttackAnimationDisplayManager : MonoBehaviour
 {
     public static AttackAnimationDisplayManager Instance;
-
+    [SerializeField] GameObject attackAnimationDisplay;
     [SerializeField] Image TimeGage;
 
     [SerializeField] Image AllyCharacter;
@@ -42,14 +42,19 @@ public class AttackAnimationDisplayManager : MonoBehaviour
     public void ActivateDisplay()
     {
         TimeGage.fillAmount = 0;
+        attackAnimationDisplay.SetActive(true);
     }
-    public void SetFirstAllyStatus(int skillType,int power,int spd,int nowHp,int maxHp)
+    public void DeactivateDisplay()
+    {
+        attackAnimationDisplay.SetActive(false);
+    }
+    public void SetFirstAllyStatus(int skillType, int power, int spd, int nowHp, int maxHp)
     {
         AllyCharacter.sprite = DisplayCharacter.GetDisplayCharacterByType(skillType);
         AllyPowerText.text = power.ToString();
         AllySpdText.text = GetSpdText(spd);
         AllyHpBar.fillAmount = 1.0f * nowHp / maxHp;
-        AllyHpBarText.text = nowHp.ToString()+" / " + maxHp.ToString();
+        AllyHpBarText.text = nowHp.ToString() + " / " + maxHp.ToString();
     }
     public void SetFirstEnemyStatus(int skillType, int power, int spd, int nowHp, int maxHp)
     {
@@ -84,17 +89,36 @@ public class AttackAnimationDisplayManager : MonoBehaviour
     public void AllyAttack()
     {
         allyAttacking = true;
-        allyAttackingTimer = 0.5f;
+        allyAttackingTimer = 0.25f;
     }
     public void EnemyAttack()
     {
         enemyAttacking = true;
-        allyAttackingTimer = 0.5f;
+        enemyAttackingTimer = 0.25f;
     }
     // Update is called once per frame
     void Update()
     {
-        
+        if (allyAttacking)
+        {
+            allyAttackingTimer -= Time.deltaTime;
+            AllyCharacter.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(-250 + allyAttackingTimer * 200, 50);
+            if (allyAttackingTimer < 0)
+            {
+                allyAttacking = false;
+                AllyCharacter.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(-250, 50);
+            }
+        } 
+        if (enemyAttacking)
+        {
+            enemyAttackingTimer -= Time.deltaTime;
+            EnemyCharacter.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(250 - enemyAttackingTimer * 200, 50);
+            if (enemyAttackingTimer < 0)
+            {
+                enemyAttacking = false;
+                EnemyCharacter.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(250, 50);
+            }
+        }
     }
     public string GetSpdText(int spd)
     {

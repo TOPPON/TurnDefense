@@ -50,11 +50,12 @@ public class DisplayCharacter : MonoBehaviour
                 }
                 break;
         }
-        print("reviveTurn:"+reviveTurn);
+        //print("reviveTurn:"+reviveTurn);
             
     }
     public static Sprite GetDisplayCharacterByType(int charaType)
     {
+        print("charaType:" +charaType);
         switch (charaType)
         {
             case 0:
@@ -81,6 +82,8 @@ public class DisplayCharacter : MonoBehaviour
                 return Resources.Load<Sprite>("Sprites/character_hime_child_white_gold");
             case 11:
                 return Resources.Load<Sprite>("Sprites/character_yosei_02_blue");
+            case 12:
+                return Resources.Load<Sprite>("Sprites/character_mahotsukai_01_black");
         }
         print("error!!!! invalid charaType:"+charaType);
         return Resources.Load<Sprite>("Sprites/Black");

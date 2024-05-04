@@ -31,6 +31,21 @@ public class StrategyManager : MonoBehaviour
     {
         //Todo: Update が各 State の時だけ動くようにする
     }
+    public void UpdateStrategy()
+    {
+        switch (strategyState)
+        {
+            case StrategyState.Normal:
+                break;
+            case StrategyState.Having:
+                break;
+            case StrategyState.Merging:
+                break;
+            case StrategyState.Recruiting:
+                RecruiteManager.Instance.UpdateRecruite();
+                break;
+        }
+    }
     public void FinishMerge()
     {
         strategyState = StrategyState.Normal;
@@ -78,7 +93,7 @@ public class StrategyManager : MonoBehaviour
     }
     public int CalcSellPrice(Character target)
     {
-        print("CalcSellPrice:" + target.rarity * 5);
+        //print("CalcSellPrice:" + target.rarity * 5);
         return target.rarity * 5;
     }
     //決定ボタンを押したときのアクション
@@ -323,6 +338,20 @@ public class StrategyManager : MonoBehaviour
         switch (strategyState)
         {
             case StrategyState.Normal:
+                //敵を仮に作る
+                Character target1 = new Character();
+                target1.maxHp = Random.Range(1, 8);
+                target1.nowHp = target1.maxHp; // 現在の体力
+                target1.power = Random.Range(1, 8); // 攻撃力
+                target1.attackSpd = Random.Range(0, 2) + 4; // 攻撃速度、実際の数値ではなく4倍したもので管理、攻撃速度が 1.25 であれば 5 として管理する
+                target1.skillType = 12;//Random.Range(1, 3); // スキルの種類
+                target1.skillPoint = Random.Range(1, 8); // スキルポイント、０～１６で表現
+                target1.skillLevel = target1.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
+                target1.rarity = Random.Range(1, 5);
+                target1.charaState = Character.CharaState.Enemy;
+                target1.lane = Random.Range(1,BattleStageManager.Instance.laneCount+1);
+                target1.mass = BattleStageManager.Instance.laneLength+2;
+                BattleStageManager.Instance.AddCharacterToFrontline(target1, target1.lane, target1.mass);
                 //通常状態
                 /*strategyState = StrategyState.Merging;
                 Character target1 = new Character();

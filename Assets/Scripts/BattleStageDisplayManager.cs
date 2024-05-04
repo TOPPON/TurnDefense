@@ -91,13 +91,13 @@ public class BattleStageDisplayManager : MonoBehaviour
         switch (character.charaState)
         {
             case Character.CharaState.None:
-                print("Noneを消そうとしています");
+                //print("Noneを消そうとしています");
                 break;
             case Character.CharaState.Ally:
             case Character.CharaState.Reserve://味方の陣地にいる場合
             case Character.CharaState.Waiting://味方の陣地にいる場合
             case Character.CharaState.Death:
-                print("encampment:" + character.encampment);
+                //print("encampment:" + character.encampment);
                 cursol = BattleStageManager.Instance.GetCursolByEncampment(character.encampment);
                 break;
             case Character.CharaState.Frontline:
@@ -106,7 +106,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                 cursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(character.lane, character.mass);
                 break;
         }
-        print("cursol:" + cursol);
+        //print("cursol:" + cursol);
         if (character.exists)
         {
             for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
@@ -115,7 +115,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                 if (dc.cursol == cursol)
                 {
                     //求めたい形式であるかチェック
-                    if (dc.charaType == character.skillType && dc.displayCharaState == character.charaState)
+                    /*if (dc.charaType == character.skillType && dc.displayCharaState == character.charaState)
                     {
                         //同じキャラクター
                         if (dc.displayCharaState == Character.CharaState.Death)
@@ -130,7 +130,7 @@ public class BattleStageDisplayManager : MonoBehaviour
 
                             }
                         }
-                    }
+                    }*/
                     dc.SetAll(cursol,character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState);
                     return;
                 }
@@ -145,7 +145,7 @@ public class BattleStageDisplayManager : MonoBehaviour
         }
         else
         {
-            print("CharaDisplayObjectCount:" + CharaDisplayObject.Count);
+            //print("CharaDisplayObjectCount:" + CharaDisplayObject.Count);
             for (int i = CharaDisplayObject.Count - 1; i >= 0; i--)
             {
                 DisplayCharacter dc = CharaDisplayObject[i];

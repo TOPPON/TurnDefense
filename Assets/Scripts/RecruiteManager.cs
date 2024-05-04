@@ -71,6 +71,10 @@ public class RecruiteManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+    public void UpdateRecruite()
+    {
         //Todo: Update ‚ª RecruiteState ‚ÌŽž‚¾‚¯“®‚­‚æ‚¤‚É‚·‚é
         switch (recruiteState)
         {

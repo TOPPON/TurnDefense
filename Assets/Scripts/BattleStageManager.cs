@@ -55,12 +55,14 @@ public class BattleStageManager : MonoBehaviour
     public bool AddCharacterToFrontline(Character newCharacter, int lane, int mass)
     {
         int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
+        print("frontlineIndex"+ frontlineIndex);
         if (frontline[frontlineIndex].exists == true)
         {
             return false;
         }
         frontline[frontlineIndex].SetStatus(newCharacter, true);
         frontline[frontlineIndex].SetExists(true);
+        print(frontline[frontlineIndex].maxHp);
         BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
         return true;
     }
@@ -199,7 +201,7 @@ public class BattleStageManager : MonoBehaviour
         int lane = target.lane;
         int mass = target.mass;
         int encampment = target.encampment;
-        print("baseEncampment:" + encampment);
+        //print("baseEncampment:" + encampment);
 
         int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
         Character frontlineCharacter = frontline[frontlineIndex];
@@ -228,12 +230,37 @@ public class BattleStageManager : MonoBehaviour
         AddCharacterToFrontline(frontlineCharacter, aheadLane, aheadMass);
         RemoveCharacter(-1, frontlineIndex);
 
-        int newFrontlineIndex= GetFrontlineIndexByLaneAndMass(aheadLane, aheadMass);
-        BattleStageManager.Instance.frontline[newFrontlineIndex].encampment = encampment;
-        int campIndex = GetCampIndexByEncampment(encampment);
-        Character waitingCharacter = camp[campIndex];
-        waitingCharacter.lane = aheadLane;
-        waitingCharacter.mass = aheadMass;
-        print("waiting.encampment:" + waitingCharacter.encampment);
+        if (target.charaState != Character.CharaState.Enemy)
+        {
+            int newFrontlineIndex = GetFrontlineIndexByLaneAndMass(aheadLane, aheadMass);
+            BattleStageManager.Instance.frontline[newFrontlineIndex].encampment = encampment;
+            int campIndex = GetCampIndexByEncampment(encampment);
+            Character waitingCharacter = camp[campIndex];
+            waitingCharacter.lane = aheadLane;
+            waitingCharacter.mass = aheadMass;
+            //print("waiting.encampment:" + waitingCharacter.encampment);
+        }
+    }
+    public void DieFrontlineCharacter(Character target)
+    {
+        int frontlineIndex = GetFrontlineIndexByLaneAndMass(target.lane, target.mass);
+        //frontline のキャラを削除する
+        if (target.charaState == Character.CharaState.Enemy)
+        {
+            RemoveCharacter(-1,frontlineIndex);
+        }
+        else
+        {
+            //味方
+            int encampment = target.encampment;
+            int campIndex = GetCampIndexByEncampment(encampment);
+            Character waitingCharacter = camp[campIndex];
+            waitingCharacter.reviveTurn = waitingCharacter.reviveMaxTurn;
+            waitingCharacter.charaState = Character.CharaState.Death;
+            waitingCharacter.lane = 0;
+            waitingCharacter.mass = 0;
+            RemoveCharacter(-1, frontlineIndex);
+            BattleStageDisplayManager.Instance.RefreshCharacter(waitingCharacter);
+        }
     }
 }
