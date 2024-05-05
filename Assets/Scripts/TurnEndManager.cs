@@ -35,7 +35,15 @@ public class TurnEndManager : MonoBehaviour
     }
     public void EnemyArriveAllyCampCheck()
     {
-
+        for (int lane = 1; lane <= BattleStageManager.Instance.laneCount; lane++)
+        {
+            int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, BattleStageManager.Instance.laneLength + 2);
+            Character character = BattleStageManager.Instance.frontline[frontlineIndex];
+            if (character.exists && character.charaState == Character.CharaState.Frontline)
+            {
+                GameManager.Instance.Goal();
+            }
+        }
     }
     public void ReduceCampReviveTurnAndRevive()
     {
