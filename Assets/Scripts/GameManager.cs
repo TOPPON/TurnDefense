@@ -114,6 +114,20 @@ public class GameManager : MonoBehaviour
         money = value;
         BattleInformationDisplayManager.Instance.RefreshMoneyText(money);
     }
+
+    public void Goal()
+    {
+        goalPeople++;
+        if (stageType == 0 && goalPeople <= clearPeople)
+        {
+
+        }
+    }
+    public void GameOver()
+    {
+
+    }
+
     public void CompleteMarchPlan()
     {
         if (turnState == TurnState.BeforeMarch)
@@ -141,6 +155,8 @@ public class GameManager : MonoBehaviour
     {
         BattleStageManager.Instance.Activate();
     }
+
+    //“ü—ÍŒn
     public void PushAButton()
     {
         switch (turnState)
