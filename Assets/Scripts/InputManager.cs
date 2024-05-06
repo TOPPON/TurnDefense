@@ -46,5 +46,37 @@ public class InputManager : MonoBehaviour
         {
             GameManager.Instance.PushStartButton();
         }
+
+        //コントローラ用ボタン
+        /*if (Input.GetButtonDown("PadA"))
+        {
+            GameManager.Instance.PushAButton();
+        }
+        if (Input.GetButtonDown("PadB"))
+        {
+            GameManager.Instance.PushBButton();
+        }
+        if (Input.GetButtonDown("PadLeft"))
+        {
+            GameManager.Instance.PushLeftButton();
+        }
+        if (Input.GetButtonDown("PadRight"))
+        {
+            GameManager.Instance.PushRightButton();
+        }
+        if (Input.GetButtonDown("PadUp"))
+        {
+            GameManager.Instance.PushUpButton();
+        }
+        if (Input.GetButtonDown("PadDown"))
+        {
+            GameManager.Instance.PushDownButton();
+        }
+        if (Input.GetButtonDown("PadStart"))
+        {
+            GameManager.Instance.PushStartButton();
+        }*/
+        //print(Input.GetAxis("Vertical"));
+        //print(Input.GetAxis("Horizontal"));
     }
 }

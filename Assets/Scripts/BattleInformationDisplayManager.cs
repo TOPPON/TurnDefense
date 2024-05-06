@@ -33,7 +33,7 @@ public class BattleInformationDisplayManager : MonoBehaviour
     }
     public void RefreshTurnsDisplay(int turns)
     {
-        turnsText.text = "ターン " + turns.ToString();
+        turnsText.text = "ターン " + turns.ToString()+"\n"+"(難易度 "+GameManager.Instance.difficulty+" )";
     }
     public void RefreshClearConditionText(int stageType, int people, int turns, int clearpeople, int clearturn)
     {

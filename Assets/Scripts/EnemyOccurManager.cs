@@ -32,7 +32,7 @@ public class EnemyOccurManager : MonoBehaviour
         int turns = GameManager.Instance.turns;
 
         //ゲーム難易度。敵の強くなる速度、発生率が変わる。
-        int difficulty = 3;
+        int difficulty = 2;
 
         //イメージ
         //dif1 t=1~9 strong=0(星0) 10~18 strong=1(星1) 19~27 strong=2(星2) n(10-dif)+1~(n+1)(10-dif) strong=n(星は0(0),1(1),2(2),3(4),4(8),5(10)の)強いやつ、発生率 70%
@@ -42,7 +42,6 @@ public class EnemyOccurManager : MonoBehaviour
         //発生させるかどうかの判断
         if ((difficulty * 5 + 70) * turns / 100 == (difficulty * 5 + 70) * (turns + 1) / 100+2)//無条件で発生させるように変更している
         {
-            print("発生させない");
             return;
         }
         int occurs = 1;
@@ -85,7 +84,6 @@ public class EnemyOccurManager : MonoBehaviour
             else if (n >= 16) newEnemy.rarity = 5;
             newEnemy.charaState = Character.CharaState.Enemy;
             newEnemy.lane = ((int)(turns * turns * (10 + k1) / 10.0f +  turns * (10 + k2) / 10.0f + k3))%BattleStageManager.Instance.laneCount+1;//Random.Range(1, BattleStageManager.Instance.laneCount + 1);
-            print(newEnemy.lane);
             newEnemy.mass = BattleStageManager.Instance.laneLength + 2;
             BattleStageManager.Instance.AddCharacterToFrontline(newEnemy, newEnemy.lane, newEnemy.mass);
         }

@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     public int clearPeople;// = 3; //クリアに必要な人数
     public int clearTurn;// = 100; //時間制限または防衛ターン数
     public int money = 0;
+    public int difficulty = 1;
+    public int enemyDefeatMoneyBase = 5;
 
     bool gameClear = false;
     bool gameOver = false;
@@ -41,17 +43,43 @@ public class GameManager : MonoBehaviour
         }
         else Destroy(gameObject);
     }
+    public void Activate()
+    {
+        BattleStageManager.Instance.Activate();
+        BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(GameManager.Instance.turns);
+        BattleInformationDisplayManager.Instance.RefreshClearConditionText(GameManager.Instance.stageType, GameManager.Instance.goalPeople, GameManager.Instance.turns, GameManager.Instance.clearPeople, GameManager.Instance.clearTurn);
+
+        if (SceneMoveManager.Instance != null)
+        {
+            difficulty = SceneMoveManager.Instance.difficulty;
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (gameStart||gameClear || gameOver)
+        if (gameStart || gameClear || gameOver)
         {
             gameControlTimer -= Time.deltaTime;
             if (gameControlTimer <= 0)
             {
-                if (gameClear) ;//SceneManager.LoadScene("GameClearScene");
-                else if (gameOver) ;//SceneManager.LoadScene("GameOverScene");
+                if (gameClear)
+                {
+                    if (SceneMoveManager.Instance != null)
+                    {
+                        SceneMoveManager.Instance.MoveToGameClearScene();
+                    }
+                    //SceneManager.LoadScene("GameClearScene");
+                }
+                else if (gameOver)
+                {
+                    if (SceneMoveManager.Instance != null)
+                    {
+                        SceneMoveManager.Instance.MoveToGameOverScene();
+                    }
+                    //SceneManager.LoadScene("GameOverScene");}
+                }
                 if (gameStart) gameStart = false;
             }
         }
@@ -189,12 +217,6 @@ public class GameManager : MonoBehaviour
         {
             print("error! invalid turnState:" + turnState);
         }
-    }
-    public void Activate()
-    {
-        BattleStageManager.Instance.Activate();
-        BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(GameManager.Instance.turns);
-        BattleInformationDisplayManager.Instance.RefreshClearConditionText(GameManager.Instance.stageType, GameManager.Instance.goalPeople, GameManager.Instance.turns, GameManager.Instance.clearPeople, GameManager.Instance.clearTurn);
     }
 
     //入力系

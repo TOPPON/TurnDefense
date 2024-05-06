@@ -37,7 +37,7 @@ public class BattleStageDisplayManager : MonoBehaviour
         for (int i = 0; i < laneCount; i++)
         {
             GameObject newLane = Instantiate(LaneObject);
-            newLane.transform.parent = FirstLineObject.transform;
+            newLane.transform.SetParent(FirstLineObject.transform, false);
             newLane.GetComponent<RectTransform>().localPosition = new Vector3(1440.0f / (laneCount + 1) * (i + 1) - 720, 0);
             RectTransform[] edgeMasses = newLane.GetComponentsInChildren<RectTransform>();
             RectTransform startTransform = new RectTransform();
@@ -59,7 +59,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             for (int j = 0; j < laneLength; j++)
             {
                 GameObject newMass = Instantiate(MassObject);
-                newMass.transform.parent = newLane.transform;
+                newMass.transform.SetParent(newLane.transform, false);
                 newMass.GetComponent<RectTransform>().localPosition = new Vector3(0, 700.0f / (laneLength + 1) * (j + 1) - 350);
                 CursolPosition.Add(newMass.GetComponent<RectTransform>());
             }
@@ -138,7 +138,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             DisplayCharacter newDisplayChara;
             //switch();
             newDisplayChara = Instantiate(DisplayCharacterPrefab).GetComponent<DisplayCharacter>();
-            newDisplayChara.transform.parent = BattleStageObject.transform;
+            newDisplayChara.transform.SetParent(BattleStageObject.transform, false);
             newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd);
             CharaDisplayObject.Add(newDisplayChara);
         }
