@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,12 +18,17 @@ public class GameManager : MonoBehaviour
     }
     public TurnState turnState;
     public TurnState beforeState; //一個前のステート
-    public int turns = 0;
-    public int goalPeople = 0;
-    public int stageType = 0; //0: 人数, 1: ターン
-    public int clearPeople = 3; //クリアに必要な人数
-    public int clearTurn = 100; //時間制限または防衛ターン数
+    public int turns = 1;//;
+    public int goalPeople;// = 0;
+    public int stageType;// = 0; //0: 人数, 1: ターン
+    public int clearPeople;// = 3; //クリアに必要な人数
+    public int clearTurn;// = 100; //時間制限または防衛ターン数
     public int money = 0;
+
+    bool gameClear = false;
+    bool gameOver = false;
+    bool gameStart = true;
+    float gameControlTimer = 1f;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +37,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             Invoke("Activate", 0.1f);
-            SetMoney(1000);
+            SetMoney(50);
         }
         else Destroy(gameObject);
     }
@@ -39,42 +45,55 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch (turnState)
+        if (gameStart||gameClear || gameOver)
         {
-            case TurnState.BeforeStrategy:
-                turnState = TurnState.Strategy;
-                break;
-            case TurnState.Strategy:
-                StrategyManager.Instance.UpdateStrategy();
-                break;
-            case TurnState.AfterStrategy:
-                turnState = TurnState.BeforeMarch;
-                MarchManager.Instance.StartMarchPlan();
-                break;
-            case TurnState.BeforeMarch:
-                // 各キャラが行動を決める
-                //turnState = TurnState.March;
-                MarchManager.Instance.UpdateMarchPlan();
-                // メモ：Character に次の行動それぞれメモしてもいいかも。Character.Action Character.nextAction=Wait,Battle,Skill,
-                // 横に移動するキャラはどうしようね
-                break;
-            case TurnState.March:
-                // 実際に行動
-                MarchManager.Instance.UpdateMarch();
-                //turnState = TurnState.AfterMarch;
-                break;
-            case TurnState.AfterMarch:
-                // クリア条件などを計算
+            gameControlTimer -= Time.deltaTime;
+            if (gameControlTimer <= 0)
+            {
+                if (gameClear) ;//SceneManager.LoadScene("GameClearScene");
+                else if (gameOver) ;//SceneManager.LoadScene("GameOverScene");
+                if (gameStart) gameStart = false;
+            }
+        }
+        else
+        {
+            switch (turnState)
+            {
+                case TurnState.BeforeStrategy:
+                    //敵の発生
+                    EnemyOccurManager.Instance.EnemyOccur();
+                    turnState = TurnState.Strategy;
+                    break;
+                case TurnState.Strategy:
+                    StrategyManager.Instance.UpdateStrategy();
+                    break;
+                case TurnState.AfterStrategy:
+                    turnState = TurnState.BeforeMarch;
+                    MarchManager.Instance.StartMarchPlan();
+                    break;
+                case TurnState.BeforeMarch:
+                    // 各キャラが行動を決める
+                    //turnState = TurnState.March;
+                    MarchManager.Instance.UpdateMarchPlan();
+                    // メモ：Character に次の行動それぞれメモしてもいいかも。Character.Action Character.nextAction=Wait,Battle,Skill,
+                    // 横に移動するキャラはどうしようね
+                    break;
+                case TurnState.March:
+                    // 実際に行動
+                    MarchManager.Instance.UpdateMarch();
+                    //turnState = TurnState.AfterMarch;
+                    break;
+                case TurnState.AfterMarch:
+                    // クリア条件などを計算
+                    TurnEndManager.Instance.TurnEnd();
+                    // ターン加算処理
+                    turnState = TurnState.BeforeStrategy;
 
-                // ターン加算処理
-                turnState = TurnState.BeforeStrategy;
-                turns++;
-                BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(turns);
-                BattleInformationDisplayManager.Instance.RefreshClearConditionText(stageType, goalPeople, turns, clearPeople, clearTurn);
-                break;
-            case TurnState.Pause:
-                break;
-                //ポーズ機能
+                    break;
+                case TurnState.Pause:
+                    break;
+                    //ポーズ機能
+            }
         }
     }
     public void PushGOButton()
@@ -118,14 +137,34 @@ public class GameManager : MonoBehaviour
     public void Goal()
     {
         goalPeople++;
-        if (stageType == 0 && goalPeople <= clearPeople)
+        if (stageType == 0 && goalPeople >= clearPeople)
         {
-
+            GameClear();
+        }
+        if (stageType == 0 && turns >= clearTurn)
+        {
+            GameOver();
+        }
+    }
+    public void AddTurn()
+    {
+        turns++;
+        if (stageType == 1 && turns >= clearTurn)
+        {
+            GameClear();
         }
     }
     public void GameOver()
     {
-
+        print("GameOver!!");
+        gameOver = true;
+        gameControlTimer = 5f;
+    }
+    public void GameClear()
+    {
+        print("GameClear!!");
+        gameClear = true;
+        gameControlTimer = 5f;
     }
 
     public void CompleteMarchPlan()
@@ -154,6 +193,8 @@ public class GameManager : MonoBehaviour
     public void Activate()
     {
         BattleStageManager.Instance.Activate();
+        BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(GameManager.Instance.turns);
+        BattleInformationDisplayManager.Instance.RefreshClearConditionText(GameManager.Instance.stageType, GameManager.Instance.goalPeople, GameManager.Instance.turns, GameManager.Instance.clearPeople, GameManager.Instance.clearTurn);
     }
 
     //入力系

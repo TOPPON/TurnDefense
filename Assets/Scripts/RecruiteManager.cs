@@ -180,7 +180,7 @@ public class RecruiteManager : MonoBehaviour
                 result.skillPoint = 0; // スキルポイント、０～１６で表現
                 result.skillLevel = result.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
                 result.rarity = 1;
-                result.reviveMaxTurn = result.rarity + 1;
+                result.reviveMaxTurn = result.rarity + 2;
                 result.reviveTurn = 0;// 
 
                 //追加ステータスを決める

@@ -210,7 +210,12 @@ public class StrategyManager : MonoBehaviour
                     }
                     else // 誰かがいた場合
                     {
-                        if (cursol == normalCursol) break;
+                        if (cursol == normalCursol)
+                        {
+                            FinishHaving();
+                            UpdateCursol(cursol);
+                            break;
+                        }
                         Character normalCursolChara;
                         Character havingChara = BattleStageManager.Instance.camp[campIndex];
                         if (normalCursol > 0)
@@ -286,10 +291,16 @@ public class StrategyManager : MonoBehaviour
                         }
                         else if (normalCursol > 0)
                         {
+                            if (cursol == normalCursol)
+                            {
+                                FinishHaving();
+                                UpdateCursol(cursol);
+                                break;
+                            }
                             //戦線→戦線の移動
                             Vector2 targetPos = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
                             Vector2 normalPos = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(normalCursol);
-                            if ((targetPos.y == 1) && (normalPos.y == 1) && (cursol != normalCursol))
+                            if ((targetPos.y == 1) && (normalPos.y == 1))
                             {
                                 int normalFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByCursol(normalCursol);
                                 Character normalFrontlineChara = BattleStageManager.Instance.frontline[normalFrontlineIndex];
@@ -339,7 +350,7 @@ public class StrategyManager : MonoBehaviour
         {
             case StrategyState.Normal:
                 //敵を仮に作る
-                Character target1 = new Character();
+                /*Character target1 = new Character();
                 target1.maxHp = Random.Range(1, 8);
                 target1.nowHp = target1.maxHp; // 現在の体力
                 target1.power = Random.Range(1, 8); // 攻撃力
@@ -351,7 +362,7 @@ public class StrategyManager : MonoBehaviour
                 target1.charaState = Character.CharaState.Enemy;
                 target1.lane = Random.Range(1,BattleStageManager.Instance.laneCount+1);
                 target1.mass = BattleStageManager.Instance.laneLength+2;
-                BattleStageManager.Instance.AddCharacterToFrontline(target1, target1.lane, target1.mass);
+                BattleStageManager.Instance.AddCharacterToFrontline(target1, target1.lane, target1.mass);*/
                 //通常状態
                 /*strategyState = StrategyState.Merging;
                 Character target1 = new Character();

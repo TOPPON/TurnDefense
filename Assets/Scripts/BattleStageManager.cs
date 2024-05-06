@@ -26,8 +26,8 @@ public class BattleStageManager : MonoBehaviour
     }
     public void Activate()
     {
-        laneCount = 2;// Random.Range(3, 8);
-        laneLength = 3;// Random.Range(5, 12);
+        laneCount = 3;// Random.Range(3, 8);
+        laneLength = 6;// Random.Range(5, 12);
         BattleStageDisplayManager.Instance.SetLaneAndMass(laneCount, laneLength);
         BattleStageDisplayManager.Instance.UpdateCursol(-1);
         for (int i = 0; i < laneCount; i++)
@@ -55,14 +55,12 @@ public class BattleStageManager : MonoBehaviour
     public bool AddCharacterToFrontline(Character newCharacter, int lane, int mass)
     {
         int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
-        print("frontlineIndex"+ frontlineIndex);
         if (frontline[frontlineIndex].exists == true)
         {
             return false;
         }
         frontline[frontlineIndex].SetStatus(newCharacter, true);
         frontline[frontlineIndex].SetExists(true);
-        print(frontline[frontlineIndex].maxHp);
         BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
         return true;
     }

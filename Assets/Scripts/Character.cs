@@ -84,7 +84,7 @@ public class Character : MonoBehaviour
     }
     public void Revive()
     {
-        if ((reviveTurn > 0) || (charaState == CharaState.Death))
+        if ((reviveTurn > 0) || (charaState != CharaState.Death))
         {
             print("Revive error!! invalid status reviveturn:" + reviveTurn + " Charastate:" + charaState);
             return;

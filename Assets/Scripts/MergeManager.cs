@@ -123,7 +123,7 @@ public class MergeManager : MonoBehaviour
         result.skillPoint = target1.skillPoint + target2.skillPoint; // スキルポイント、０～１６で表現
         result.skillLevel = result.skillPoint / 3; // スキルレベル、スキルポイントを３で割った商(切り捨て)、０～５で表現
         result.rarity = target1.rarity + 1;
-        result.reviveMaxTurn = result.rarity + 1;
+        result.reviveMaxTurn = result.rarity + 2;
         result.reviveTurn = 0;// Random.Range(0, result.reviveMaxTurn+1);//デバッグ用
         return result;
     }

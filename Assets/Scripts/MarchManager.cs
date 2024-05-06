@@ -132,6 +132,7 @@ public class MarchManager : MonoBehaviour
         if (!enemy.exists) return;
         if (enemy.charaState != Character.CharaState.Enemy) return;
         //ˆêƒ}ƒXæ‚Ìƒ}ƒX‚ğŠm”F‚µ‚Ä“®‚¯‚»‚¤‚È‚ç“®‚­
+        if (enemy.nextAction == Character.CharaAction.None) return;
         int mass = enemy.mass;
         int lane = enemy.lane;
         if (mass <= 1) return;
@@ -161,7 +162,11 @@ public class MarchManager : MonoBehaviour
     public void DecideNextAction(Character target)
     {
         if (target.exists == false) return;
-        if (target.charaState == Character.CharaState.Enemy) return;
+        if (target.charaState == Character.CharaState.Enemy)
+        {
+            target.nextAction = Character.CharaAction.Ahead;
+            return;
+        }
         //s“®‚ğŒˆ‚ß‚éBs“®‚Í4í—Ş‚ÅAAttack,March,Skill,WaitingB
         //Šî–{“I‚ÉAttack„March„WaitingASkill‚Í”Y‚Ş
         int lane = target.lane;
@@ -180,18 +185,8 @@ public class MarchManager : MonoBehaviour
         {
             enemy = BattleStageManager.Instance.frontline[enemyFrontlineIndex];
 
-            // = FetchAheadEnemyCharacterIndex(lane, mass);
-            print("enemyFrontlineIndex" + enemyFrontlineIndex);
-            print(enemy);
             if (enemy.exists)
             {
-                print("“G‚Á‚Û‚¢‚ÌƒLƒƒƒ‰‚Ì state :" + enemy.charaState);
-                print("“G‚Á‚Û‚¢‚ÌƒLƒƒƒ‰‚Ì‘¶İ :" + enemy.exists);
-            }
-
-            if (enemy.exists)
-            {
-                print("null‚¶‚á‚È‚©‚Á‚½‚æ");
                 int enemyLane = enemy.lane;
                 int enemyMass = enemy.mass;
                 if (enemyMass - mass == 2)
@@ -205,7 +200,6 @@ public class MarchManager : MonoBehaviour
                         frontlinePlanningList[up2Index] = 1;
                         target.nextAction = Character.CharaAction.Attack;
                         enemy.nextAction = Character.CharaAction.Attack;//“G‚àUŒ‚—\’è
-                        print("UŒ‚2—\’è");
                         return;
                     }
                 }
@@ -218,14 +212,11 @@ public class MarchManager : MonoBehaviour
                         frontlinePlanningList[up1Index] = 1;
                         target.nextAction = Character.CharaAction.Attack;
                         enemy.nextAction = Character.CharaAction.Attack;//“G‚àUŒ‚—\’è
-                        print("UŒ‚1—\’è");
                         return;
                     }
                 }
-                print("“–‚Ä‚Í‚Ü‚ç‚È‚©‚Á‚½");
             }
         }
-        print("UŒ‚‚Í‚È‚µ");
         /*
         //“ñ‚Ü‚·æ‚Ü‚Å‚É“G‚ª‚¢‚½‚çAttack
         if (mass >= BattleStageManager.Instance.laneLength + 2)//ƒS[ƒ‹‚Ü‚·‚Æˆê’v‚Ìê‡AAttack‚àAhead‚à‚È‚¢‚½‚ß‚¢‚Á‚½‚ñWaitingŠm’è
@@ -328,7 +319,6 @@ public class MarchManager : MonoBehaviour
 
     public int FetchAheadEnemyCharacterIndex(int lane, int mass)
     {
-        print("lane:" + lane + "mass:" + mass);
         int targetFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass);
 
         if (mass >= BattleStageManager.Instance.laneLength + 2)//ƒS[ƒ‹‚Ü‚·‚Æˆê’v‚Ìê‡AAttack‚àAhead‚à‚È‚¢‚½‚ß‚¢‚Á‚½‚ñWaitingŠm’è
@@ -347,30 +337,22 @@ public class MarchManager : MonoBehaviour
         }
         else
         {
-            print("316");
             //ˆêƒ}ƒXã‚É“G‚ª‚¢‚éê‡
             int up1MassIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass + 1);
             Character up1MassCharacter = BattleStageManager.Instance.frontline[up1MassIndex];
-            print("320" + up1MassIndex);
             if (up1MassCharacter.exists && up1MassCharacter.charaState == Character.CharaState.Enemy)
             {
-                print("323");
                 return up1MassIndex;
             }
 
             //“ñƒ}ƒXã‚É“G‚ª‚¢‚éê‡
             int up2MassIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass + 2);
             Character up2MassCharacter = BattleStageManager.Instance.frontline[up2MassIndex];
-            print("2ƒ}ƒXæ‚ÌƒLƒƒƒ‰‚Ì state :" + up2MassCharacter.charaState);
-            print("2ƒ}ƒXæ‚ÌƒLƒƒƒ‰‚Ì‘¶İ :" + up2MassCharacter.exists);
-            print("330" + up2MassIndex);
             if (up2MassCharacter.exists && up2MassCharacter.charaState == Character.CharaState.Enemy)
             {
-                print("333");
                 return up2MassIndex;
             }
         }
-        print("337");
         return -1;
     }
 

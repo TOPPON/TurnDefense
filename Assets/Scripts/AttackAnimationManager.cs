@@ -20,7 +20,7 @@ public class AttackAnimationManager : MonoBehaviour
     const float UPDATE_TIME = 0.05f;//一コマを何秒以上単位で求めるか
     float updateTimer = 0;
 
-    int gageTime;//250でマックス
+    int gageTime;//100でマックス
 
     int allyAttackTimer = 0;
     int enemyAttackTimer = 0;
@@ -76,7 +76,7 @@ public class AttackAnimationManager : MonoBehaviour
                 if (updateTimer > UPDATE_TIME)
                 {
                     gageTime++;
-                    AttackAnimationDisplayManager.Instance.UpdateTimeGage(gageTime / 250.0f);
+                    AttackAnimationDisplayManager.Instance.UpdateTimeGage(gageTime / 100.0f);
                     updateTimer = 0;
 
                     allyAttackTimer += allyCharacter.attackSpd;
@@ -113,7 +113,7 @@ public class AttackAnimationManager : MonoBehaviour
                             //復活に移動させる
                             BattleStageManager.Instance.DieFrontlineCharacter(allyCharacter);
                             //お金を増やして敵を消す
-                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 3);// Todo:もらえる値段は要調整
+                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 5 + 5);// Todo:もらえる値段は要調整
                             BattleStageManager.Instance.DieFrontlineCharacter(enemyCharacter);
                         }
                         else if (allyCharacter.nowHp <= 0)
@@ -122,19 +122,23 @@ public class AttackAnimationManager : MonoBehaviour
                             BattleStageManager.Instance.DieFrontlineCharacter(allyCharacter);
                             //敵を一マス進める
                             BattleStageManager.Instance.FrontlineCharacterMove(enemyCharacter, 0, -1);
+                            //敵の表示を更新する
+                            //BattleStageDisplayManager.Instance.RefreshCharacter(enemyCharacter);
                         }
                         else if (enemyCharacter.nowHp <= 0)
                         {
                             //お金を増やしてキャラを消す
-                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 3);// Todo:もらえる値段は要調整
+                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 5 + 5);// Todo:もらえる値段は要調整
                             BattleStageManager.Instance.DieFrontlineCharacter(enemyCharacter);
                             //味方を一マス進める
                             BattleStageManager.Instance.FrontlineCharacterMove(allyCharacter);
+                            //味方の表示を更新する
+                            //BattleStageDisplayManager.Instance.RefreshCharacter(enemyCharacter);
                         }
                         //
                         attackAnimationState = AttackAnimationState.After;
                     }
-                    if (gageTime >= 250)
+                    if (gageTime >= 100)
                     {
                         attackAnimationState = AttackAnimationState.After;
                     }

@@ -73,7 +73,6 @@ public class BattleStageDisplayManager : MonoBehaviour
     }
     public void ActivateNormalCursol(int cursol)
     {
-        print(cursol);
         NormalCursolObject.SetActive(true);
         NormalCursolObject.GetComponent<RectTransform>().position = CursolPosition[cursol + 21].position;
     }
@@ -96,12 +95,12 @@ public class BattleStageDisplayManager : MonoBehaviour
             case Character.CharaState.Ally:
             case Character.CharaState.Reserve://ñ°ï˚ÇÃêwínÇ…Ç¢ÇÈèÍçá
             case Character.CharaState.Waiting://ñ°ï˚ÇÃêwínÇ…Ç¢ÇÈèÍçá
+            case Character.CharaState.Goal:
             case Character.CharaState.Death:
                 //print("encampment:" + character.encampment);
                 cursol = BattleStageManager.Instance.GetCursolByEncampment(character.encampment);
                 break;
             case Character.CharaState.Frontline:
-            case Character.CharaState.Goal:
             case Character.CharaState.Enemy:
                 cursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(character.lane, character.mass);
                 break;
@@ -131,7 +130,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                             }
                         }
                     }*/
-                    dc.SetAll(cursol,character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState);
+                    dc.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd);
                     return;
                 }
             }
@@ -140,7 +139,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             //switch();
             newDisplayChara = Instantiate(DisplayCharacterPrefab).GetComponent<DisplayCharacter>();
             newDisplayChara.transform.parent = BattleStageObject.transform;
-            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState);
+            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd);
             CharaDisplayObject.Add(newDisplayChara);
         }
         else
