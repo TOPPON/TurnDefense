@@ -19,8 +19,8 @@ public class RecruiteManager : MonoBehaviour
     public float skillAngle;
     public float statusRollingSpeed;
     public float skillRollingSpeed;
-    public int statusRollingCount;
-    public int skillRollingCount;
+    public float statusRollingTimer;
+    public float skillRollingTimer;
     public float stateTimer;
     public int[] statusRouletteNumber = new int[24];
     public int[] skillRouletteNumber = new int[4];
@@ -46,8 +46,8 @@ public class RecruiteManager : MonoBehaviour
     public void Activate()
     {
         recruiteState = RecruiteState.BeforeStatus;
-        statusRollingCount = 1000;
-        skillRollingCount = 1000;
+        statusRollingTimer = 2f;
+        skillRollingTimer = 2f;
         statusAngle = 0;
         skillAngle = 0;
         RecruiteDisplayManager.Instance.UpdateStatusArrow(statusAngle);
@@ -79,17 +79,17 @@ public class RecruiteManager : MonoBehaviour
         switch (recruiteState)
         {
             case RecruiteState.BeforeStatus:
-                statusRollingSpeed = Random.Range(10f, 15f);
+                statusRollingSpeed = Random.Range(700f, 1200f);
                 recruiteState = RecruiteState.StatusRolling;
                 RecruiteDisplayManager.Instance.UpdateNextButtonText("スキップ");
                 break;
             case RecruiteState.StatusRolling:
-                if (statusRollingCount > 0)
+                if (statusRollingTimer > 0)
                 {
-                    statusRollingCount--;
-                    statusAngle += statusRollingSpeed;
+                    statusRollingTimer -= Time.deltaTime;
+                    statusAngle += statusRollingSpeed * 0.02f;
                     RecruiteDisplayManager.Instance.UpdateStatusArrow(statusAngle);
-                    statusRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    statusRollingSpeed *= Random.Range(1.000f - Time.deltaTime, 0.985f - Time.deltaTime);
                 }
                 else
                 {
@@ -100,16 +100,16 @@ public class RecruiteManager : MonoBehaviour
                 recruiteState = RecruiteState.BeforeSkill;
                 break;
             case RecruiteState.BeforeSkill:
-                skillRollingSpeed = Random.Range(10f, 15f);
+                skillRollingSpeed = Random.Range(700f, 1200f);
                 recruiteState = RecruiteState.SkillRolling;
                 break;
             case RecruiteState.SkillRolling:
-                if (skillRollingCount > 0)
+                if (skillRollingTimer > 0)
                 {
-                    skillRollingCount--;
-                    skillAngle += skillRollingSpeed;
+                    skillRollingTimer -= Time.deltaTime;
+                    skillAngle += skillRollingSpeed * 0.02f;
                     RecruiteDisplayManager.Instance.UpdateSkillArrow(skillAngle);
-                    skillRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    skillRollingSpeed *= Random.Range(1.000f - Time.deltaTime, 0.985f - Time.deltaTime);
                 }
                 else
                 {
@@ -126,21 +126,21 @@ public class RecruiteManager : MonoBehaviour
         switch (recruiteState)
         {
             case RecruiteState.BeforeStatus:
-                statusRollingSpeed = Random.Range(10f, 15f);
+                statusRollingSpeed = Random.Range(700f, 1200f);
                 recruiteState = RecruiteState.AfterStatus;
-                for (int i = 0; i < statusRollingCount; i++)
+                for (int i = 0; i < statusRollingTimer / 0.02f; i++)
                 {
-                    statusAngle += statusRollingSpeed;
-                    statusRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    statusAngle += statusRollingSpeed * 0.02f;
+                    statusRollingSpeed *= Random.Range(0.98f, 0.965f);
                 }
                 RecruiteDisplayManager.Instance.UpdateStatusArrow(statusAngle);
                 break;
             case RecruiteState.StatusRolling:
                 recruiteState = RecruiteState.AfterStatus;
-                for (int i = 0; i < statusRollingCount; i++)
+                for (int i = 0; i < statusRollingTimer / 0.02f; i++)
                 {
-                    statusAngle += statusRollingSpeed;
-                    statusRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    statusAngle += statusRollingSpeed * 0.02f;
+                    statusRollingSpeed *= Random.Range(0.98f, 0.965f);
                 }
                 RecruiteDisplayManager.Instance.UpdateStatusArrow(statusAngle);
                 break;
@@ -149,21 +149,21 @@ public class RecruiteManager : MonoBehaviour
             case RecruiteState.BeforeSkill:
                 recruiteState = RecruiteState.AfterSkill;
                 RecruiteDisplayManager.Instance.UpdateNextButtonText("OK");
-                skillRollingSpeed = Random.Range(10f, 15f);
-                for (int i = 0; i < skillRollingCount; i++)
+                skillRollingSpeed = Random.Range(700f, 1200f);
+                for (int i = 0; i < skillRollingTimer / 0.02f; i++)
                 {
-                    skillAngle += skillRollingSpeed;
-                    skillRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    skillAngle += skillRollingSpeed * 0.02f;
+                    skillRollingSpeed *= Random.Range(0.98f, 0.965f);
                 }
                 RecruiteDisplayManager.Instance.UpdateSkillArrow(skillAngle);
                 break;
             case RecruiteState.SkillRolling:
                 recruiteState = RecruiteState.AfterSkill;
                 RecruiteDisplayManager.Instance.UpdateNextButtonText("OK");
-                for (int i = 0; i < skillRollingCount; i++)
+                for (int i = 0; i < skillRollingTimer / 0.02f; i++)
                 {
-                    skillAngle += skillRollingSpeed;
-                    skillRollingSpeed *= Random.Range(0.988f, 0.992f);
+                    skillAngle += skillRollingSpeed * 0.02f;
+                    skillRollingSpeed *= Random.Range(0.98f, 0.965f);
                 }
                 RecruiteDisplayManager.Instance.UpdateSkillArrow(skillAngle);
                 break;

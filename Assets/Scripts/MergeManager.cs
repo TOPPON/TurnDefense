@@ -86,7 +86,8 @@ public class MergeManager : MonoBehaviour
                 result.skillType = target2.skillType;
                 break;
         }
-        if(target1.encampment>0)//キャンプに存在する場合
+        int campIndex = BattleStageManager.Instance.GetCampIndexByEncampment(target2.encampment);
+        if (target1.encampment > 0)//キャンプに存在する場合
         {
             BattleStageManager.Instance.RemoveCharacter(BattleStageManager.Instance.GetCampIndexByEncampment(target1.encampment), -1);
         }
@@ -96,14 +97,13 @@ public class MergeManager : MonoBehaviour
         }
         if (target2.encampment > 0)//キャンプに存在する場合
         {
-
-            BattleStageManager.Instance.RemoveCharacter(BattleStageManager.Instance.GetCampIndexByEncampment(target2.encampment),-1);
+            BattleStageManager.Instance.RemoveCharacter(BattleStageManager.Instance.GetCampIndexByEncampment(target2.encampment), -1);
         }
         else
         {
             print("invalid position!!!target2.encampment:" + target2.encampment);
         }
-        BattleStageManager.Instance.AddCharacterToCamp(result);
+        BattleStageManager.Instance.AddCharacterToCamp(result, campIndex);
     }
     void Back()
     {

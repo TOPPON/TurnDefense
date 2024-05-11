@@ -65,19 +65,21 @@ public class BattleStageManager : MonoBehaviour
         return true;
     }
     //キャラを指定したカーソルに追加する。空きがなかった場合は false を返す
-    public bool AddCharacterToCamp(Character newCharacter, int cursol)
+    public bool AddCharacterToCamp(Character newCharacter, int campIndex)
     {
-        if (cursol < 0)
+        if (campIndex < 0)
         {
             return false;
         }
-        if (camp[cursol].exists == true)
+        if (camp[campIndex].exists == true)
         {
             return false;
         }
-        camp[cursol].SetStatus(newCharacter, true);
-        camp[cursol].SetExists(true);
-        BattleStageDisplayManager.Instance.RefreshCharacter(camp[cursol]);
+        camp[campIndex].SetStatus(newCharacter, true);
+        camp[campIndex].SetExists(true);
+        camp[campIndex].UpdateCharacterStatusInCamp();
+        //print(campIndex);
+        BattleStageDisplayManager.Instance.RefreshCharacter(camp[campIndex]);
         return true;
     }
 

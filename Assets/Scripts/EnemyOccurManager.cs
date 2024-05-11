@@ -53,7 +53,7 @@ public class EnemyOccurManager : MonoBehaviour
             newEnemy.power = 1;
             newEnemy.attackSpd = 4;
             newEnemy.skillPoint = 0;
-            int n = (int)(turns / (6.5f - difficulty*0.5f));
+            int n = (int)(turns / (7.5f - difficulty));
             for (int i = 0; i < n; i++)//ランダムステータス割り振り
             {
                 int index = Random.Range(1, 5);

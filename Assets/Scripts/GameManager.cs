@@ -46,13 +46,13 @@ public class GameManager : MonoBehaviour
     public void Activate()
     {
         BattleStageManager.Instance.Activate();
-        BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(GameManager.Instance.turns);
-        BattleInformationDisplayManager.Instance.RefreshClearConditionText(GameManager.Instance.stageType, GameManager.Instance.goalPeople, GameManager.Instance.turns, GameManager.Instance.clearPeople, GameManager.Instance.clearTurn);
-
         if (SceneMoveManager.Instance != null)
         {
             difficulty = SceneMoveManager.Instance.difficulty;
         }
+        BattleInformationDisplayManager.Instance.RefreshTurnsDisplay(GameManager.Instance.turns);
+        BattleInformationDisplayManager.Instance.RefreshClearConditionText(GameManager.Instance.stageType, GameManager.Instance.goalPeople, GameManager.Instance.turns, GameManager.Instance.clearPeople, GameManager.Instance.clearTurn);
+        clearPeople = difficulty + 2;
     }
 
 
