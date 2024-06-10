@@ -4672,6 +4672,7 @@ MonoBehaviour:
   GoldCoinPrefab: {fileID: 1557103692283683707, guid: 3fd5fec84462cf645b36a791d76b45db, type: 3}
   SilverCoinPrefab: {fileID: 833673894050496288, guid: 767885bcf62b53b41af1069c7ceaa8d4, type: 3}
   moneyDisplayObject: {fileID: 1559792307}
+  BattleSymbolPrefab: {fileID: 379338543799376388, guid: e7a4c897ae0bff8478f0590a69326571, type: 3}
 --- !u!1 &527928279
 GameObject:
   m_ObjectHideFlags: 0
