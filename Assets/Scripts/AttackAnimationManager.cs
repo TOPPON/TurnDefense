@@ -113,7 +113,8 @@ public class AttackAnimationManager : MonoBehaviour
                             //復活に移動させる
                             BattleStageManager.Instance.DieFrontlineCharacter(allyCharacter);
                             //お金を増やして敵を消す
-                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 5 + 5);// Todo:もらえる値段は要調整
+                            int money = enemyCharacter.rarity * 5 + 5;// Todo:もらえる値段は要調整
+                            BattleStageDisplayManager.Instance.OccurMoneyByDefeat(enemyCharacter.lane, enemyCharacter.mass, money);
                             BattleStageManager.Instance.DieFrontlineCharacter(enemyCharacter);
                         }
                         else if (allyCharacter.nowHp <= 0)
@@ -128,7 +129,9 @@ public class AttackAnimationManager : MonoBehaviour
                         else if (enemyCharacter.nowHp <= 0)
                         {
                             //お金を増やしてキャラを消す
-                            GameManager.Instance.AddMoney(enemyCharacter.rarity * 5 + 5);// Todo:もらえる値段は要調整
+                            //GameManager.Instance.GetMoney(enemyCharacter.rarity * 5 + 5);
+                            int money = enemyCharacter.rarity * 5 + 5;// Todo:もらえる値段は要調整
+                            BattleStageDisplayManager.Instance.OccurMoneyByDefeat(enemyCharacter.lane,enemyCharacter.mass,money);
                             BattleStageManager.Instance.DieFrontlineCharacter(enemyCharacter);
                             //味方を一マス進める
                             BattleStageManager.Instance.FrontlineCharacterMove(allyCharacter);

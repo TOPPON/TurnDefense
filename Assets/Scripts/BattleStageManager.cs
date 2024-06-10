@@ -52,7 +52,7 @@ public class BattleStageManager : MonoBehaviour
             camp.Add(temp);
         }
     }
-    public bool AddCharacterToFrontline(Character newCharacter, int lane, int mass)
+    public bool AddCharacterToFrontline(Character newCharacter, int lane, int mass, Vector2 moveVec = default(Vector2))
     {
         int frontlineIndex = GetFrontlineIndexByLaneAndMass(lane, mass);
         if (frontline[frontlineIndex].exists == true)
@@ -61,7 +61,7 @@ public class BattleStageManager : MonoBehaviour
         }
         frontline[frontlineIndex].SetStatus(newCharacter, true);
         frontline[frontlineIndex].SetExists(true);
-        BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex]);
+        BattleStageDisplayManager.Instance.RefreshCharacter(frontline[frontlineIndex], moveVec);
         return true;
     }
     //キャラを指定したカーソルに追加する。空きがなかった場合は false を返す
@@ -227,7 +227,7 @@ public class BattleStageManager : MonoBehaviour
             print("massが下限を下回った");
             aheadMass = 1;
         }
-        AddCharacterToFrontline(frontlineCharacter, aheadLane, aheadMass);
+        AddCharacterToFrontline(frontlineCharacter, aheadLane, aheadMass, new Vector2(xVec, yVec));
         RemoveCharacter(-1, frontlineIndex);
 
         if (target.charaState != Character.CharaState.Enemy)
@@ -247,7 +247,7 @@ public class BattleStageManager : MonoBehaviour
         //frontline のキャラを削除する
         if (target.charaState == Character.CharaState.Enemy)
         {
-            RemoveCharacter(-1,frontlineIndex);
+            RemoveCharacter(-1, frontlineIndex);
         }
         else
         {

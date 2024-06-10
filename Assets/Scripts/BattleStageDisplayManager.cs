@@ -15,6 +15,11 @@ public class BattleStageDisplayManager : MonoBehaviour
     [SerializeField] GameObject NormalCursolObject;
     [SerializeField] GameObject BattleStageObject;
     [SerializeField] GameObject DisplayCharacterPrefab;
+    [SerializeField] GameObject GoldCoinPrefab;
+    [SerializeField] GameObject SilverCoinPrefab;
+    [SerializeField] GameObject moneyDisplayObject;
+    [SerializeField] GameObject BattleSymbolPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -84,7 +89,7 @@ public class BattleStageDisplayManager : MonoBehaviour
     {
         return CursolPosition[cursol + 21].position;
     }
-    public void RefreshCharacter(Character character)
+    public void RefreshCharacter(Character character, Vector2 moveVec = default(Vector2), bool isBirth = false, bool isDeath = false)
     {
         int cursol = 0;
         switch (character.charaState)
@@ -130,7 +135,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                             }
                         }
                     }*/
-                    dc.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd);
+                    dc.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec);
                     return;
                 }
             }
@@ -139,7 +144,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             //switch();
             newDisplayChara = Instantiate(DisplayCharacterPrefab).GetComponent<DisplayCharacter>();
             newDisplayChara.transform.SetParent(BattleStageObject.transform, false);
-            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd);
+            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec);
             CharaDisplayObject.Add(newDisplayChara);
         }
         else
@@ -155,5 +160,40 @@ public class BattleStageDisplayManager : MonoBehaviour
                 }
             }
         }
+    }
+    public void OccurMoneyByDefeat(int lane, int mass, int value)
+    {
+        print("OccurMoneyByDefeat" + lane + "&" + mass + "&" + value + "&");
+        int cursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(lane, mass);
+        Vector3 position = GetCursolPosition(cursol);
+        while (value >= 5)
+        {
+            value -= 5;
+            DisplayCoin displayCoin;
+            displayCoin = Instantiate(GoldCoinPrefab).GetComponent<DisplayCoin>();
+            displayCoin.transform.SetParent(BattleStageObject.transform, false);
+            displayCoin.Occur(position, 5, moneyDisplayObject);
+        }
+        while (value >= 1)
+        {
+            value -= 1;
+            DisplayCoin displayCoin;
+            displayCoin = Instantiate(SilverCoinPrefab).GetComponent<DisplayCoin>();
+            displayCoin.transform.SetParent(BattleStageObject.transform, false);
+            displayCoin.Occur(position, 1, moneyDisplayObject);
+        }
+    }
+    public void OccurBattleSymbol(int lane1, int mass1, int lane2, int mass2)
+    {
+        int cursol1 = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(lane1, mass1);
+        int cursol2 = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass(lane2, mass2);
+
+        Vector3 position1 = GetCursolPosition(cursol1);
+        Vector3 position2 = GetCursolPosition(cursol2);
+
+        SymbolAnimation symbolAnimation;
+        symbolAnimation = Instantiate(BattleSymbolPrefab).GetComponent<SymbolAnimation>();
+        symbolAnimation.transform.SetParent(BattleStageObject.transform, false);
+        symbolAnimation.Occur(SymbolAnimation.SymbolType.BattleStart, (position1 + position2) / 2, 1f);
     }
 }

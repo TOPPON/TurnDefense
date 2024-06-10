@@ -8,16 +8,25 @@ public class MarchManager : MonoBehaviour
     public enum MarchState
     {
         Normal,
+        BeforeAttack,
         AttackAnimation,
+        AfterAttack,
         SkillAnimation,
         Enemy
     }
     MarchState marchState;
     int lanesCursol;
     int massCursol;
+    float marchTimer = 0;
+    public const float MARCH_INTERVAL = 0.2f;
 
     //行動済みの範囲を抑えるためだけのリスト
     List<int> frontlinePlanningList = new List<int>();
+
+    //アニメーション前に一時的に対象のキャラを保存する用
+    Character enemyForAttackAnimation;
+    Character allyForAttackAnimation;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,37 +85,67 @@ public class MarchManager : MonoBehaviour
         switch (marchState)
         {
             case MarchState.Normal:
-                lanesCursol++;
-                if (lanesCursol > BattleStageManager.Instance.laneCount)
+                marchTimer += Time.deltaTime;
+                if (marchTimer > MARCH_INTERVAL)
                 {
-                    lanesCursol -= BattleStageManager.Instance.laneCount;
-                    massCursol--;
-                    if (massCursol < 1)
+                    marchTimer = 0;
+                    lanesCursol++;
+                    if (lanesCursol > BattleStageManager.Instance.laneCount)
                     {
-                        //敵の移動がスタート
-                        StartDoMarchEnemy();
+                        lanesCursol -= BattleStageManager.Instance.laneCount;
+                        massCursol--;
+                        if (massCursol < 1)
+                        {
+                            //敵の移動がスタート
+                            StartDoMarchEnemy();
+                            return;
+                        }
+                    }
+                    int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
+                    Character target = BattleStageManager.Instance.frontline[frontlineIndex];
+                    if (!target.exists)
+                    {
+                        marchTimer = MARCH_INTERVAL;
                         return;
                     }
+                    if (target.charaState == Character.CharaState.Enemy)
+                    {
+                        marchTimer = MARCH_INTERVAL;
+                        return;
+                    }
+                    switch (target.nextAction)
+                    {
+                        case Character.CharaAction.Attack:
+                            DoAttack(target);
+                            break;
+                        case Character.CharaAction.Ahead:
+                            DoAhead(target);
+                            break;
+                        case Character.CharaAction.Waiting:
+                            target.nextAction = Character.CharaAction.None;
+                            break;
+                    }
                 }
-                int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
-                Character target = BattleStageManager.Instance.frontline[frontlineIndex];
-                if (!target.exists) return;
-                if (target.charaState == Character.CharaState.Enemy) return;
-                switch (target.nextAction)
+                break;
+            case MarchState.BeforeAttack:
+                marchTimer += Time.deltaTime;
+                if (marchTimer > 1f)
                 {
-                    case Character.CharaAction.Attack:
-                        DoAttack(target);
-                        break;
-                    case Character.CharaAction.Ahead:
-                        DoAhead(target);
-                        break;
-                    case Character.CharaAction.Waiting:
-                        target.nextAction = Character.CharaAction.None;
-                        break;
+                    marchTimer = 0;
+                    marchState = MarchState.AttackAnimation;
+                    AttackAnimationManager.Instance.Activate(allyForAttackAnimation, enemyForAttackAnimation);
                 }
                 break;
             case MarchState.AttackAnimation:
                 AttackAnimationManager.Instance.UpdateAttackAnimation();
+                break;
+            case MarchState.AfterAttack:
+                marchTimer += Time.deltaTime;
+                if (marchTimer > 1f)
+                {
+                    marchTimer = 0;
+                    marchState = MarchState.Normal;
+                }
                 break;
             case MarchState.Enemy:
                 UpdateDoMarchEnemy();
@@ -115,49 +154,53 @@ public class MarchManager : MonoBehaviour
     }
     public void UpdateDoMarchEnemy()
     {
-        lanesCursol++;
-        if (lanesCursol > BattleStageManager.Instance.laneCount)
+        marchTimer += Time.deltaTime;
+        if (marchTimer > MARCH_INTERVAL)
         {
-            lanesCursol -= BattleStageManager.Instance.laneCount;
-            massCursol++;
-            if (massCursol > BattleStageManager.Instance.laneLength + 2)
+            lanesCursol++;
+            marchTimer = 0;
+            if (lanesCursol > BattleStageManager.Instance.laneCount)
             {
-                GameManager.Instance.CompleteDoMarch();
-                
+                lanesCursol -= BattleStageManager.Instance.laneCount;
+                massCursol++;
+                if (massCursol > BattleStageManager.Instance.laneLength + 2)
+                {
+                    GameManager.Instance.CompleteDoMarch();
+                    return;
+                }
+            }
+            int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
+            Character enemy = BattleStageManager.Instance.frontline[frontlineIndex];
+            if (!enemy.exists)
+            {
+                marchTimer = MARCH_INTERVAL;
                 return;
             }
-        }
-        int frontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lanesCursol, massCursol);
-        Character enemy = BattleStageManager.Instance.frontline[frontlineIndex];
-        if (!enemy.exists) return;
-        if (enemy.charaState != Character.CharaState.Enemy) return;
-        //一マス先のマスを確認して動けそうなら動く
-        if (enemy.nextAction == Character.CharaAction.None) return;
-        int mass = enemy.mass;
-        int lane = enemy.lane;
-        if (mass <= 1) return;
-        int aheadFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass - 1);
-        Character AheadChara = BattleStageManager.Instance.frontline[aheadFrontlineIndex];
-        if (!AheadChara.exists)
-        {
-            BattleStageManager.Instance.FrontlineCharacterMove(enemy, 0, -1);
-        }
-        /*switch (enemy.nextAction)
-        {
-            case Character.CharaAction.Attack:
-                //これは存在しないはず
-                print("error! invalid enemy nextAction: attack");
-                enemy.nextAction = Character.CharaAction.None;
-                break;
-            case Character.CharaAction.Ahead:
+            if (enemy.charaState != Character.CharaState.Enemy)
+            {
+                marchTimer = MARCH_INTERVAL;
+                return;
+            }
+            //一マス先のマスを確認して動けそうなら動く
+            if (enemy.nextAction == Character.CharaAction.None)
+            {
+                marchTimer = MARCH_INTERVAL;
+                return;
+            }
+            int mass = enemy.mass;
+            int lane = enemy.lane;
+            if (mass <= 1)
+            {
+                marchTimer = 0.1f;
+                return;
+            }
+            int aheadFrontlineIndex = BattleStageManager.Instance.GetFrontlineIndexByLaneAndMass(lane, mass - 1);
+            Character AheadChara = BattleStageManager.Instance.frontline[aheadFrontlineIndex];
+            if (!AheadChara.exists)
+            {
                 BattleStageManager.Instance.FrontlineCharacterMove(enemy, 0, -1);
-                //歩いたので完了にする
-                enemy.nextAction = Character.CharaAction.None;
-                break;
-            case Character.CharaAction.Waiting:
-                enemy.nextAction = Character.CharaAction.None;
-                break;
-        }*/
+            }
+        }
     }
     public void DecideNextAction(Character target)
     {
@@ -304,7 +347,7 @@ public class MarchManager : MonoBehaviour
     }
     public void DoAttack(Character target)
     {
-        marchState = MarchState.AttackAnimation;
+        marchState = MarchState.BeforeAttack;
         int enemyFrontlineIndex = FetchAheadEnemyCharacterIndex(target.lane, target.mass);
         if (enemyFrontlineIndex == -1)
         {
@@ -312,7 +355,11 @@ public class MarchManager : MonoBehaviour
             return;
         }
         Character enemy = BattleStageManager.Instance.frontline[enemyFrontlineIndex];
-        AttackAnimationManager.Instance.Activate(target, enemy);
+        allyForAttackAnimation = target;
+        enemyForAttackAnimation = enemy;
+        //バトル開始のアニメーション
+        BattleStageDisplayManager.Instance.OccurBattleSymbol(target.lane, target.mass, enemy.lane, enemy.mass);
+        //
         enemy.nextAction = Character.CharaAction.None;
         target.nextAction = Character.CharaAction.None;
     }
@@ -360,7 +407,7 @@ public class MarchManager : MonoBehaviour
     {
         if (marchState == MarchState.AttackAnimation)
         {
-            marchState = MarchState.Normal;
+            marchState = MarchState.AfterAttack;
             AttackAnimationManager.Instance.Deactivate();
         }
         else

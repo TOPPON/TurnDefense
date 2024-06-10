@@ -12,6 +12,14 @@ public class DisplayCharacter : MonoBehaviour
     public int reviveMaxTurn; //�����܂łɉ��^�[���K�v��
     public int rarity; // ���A���e�B
     public Character.CharaState displayCharaState;
+
+    public bool marching;//移動しているか
+    public bool birthing;//誕生しているか
+    public bool deathing;//死につつあるか
+    float marchingTimer = 0;
+    Vector3 beforePositionForMarch;
+    Vector3 afterPositionForMarch;
+
     [SerializeField] GameObject waitingDisplay;
     [SerializeField] GameObject reviveDisplay;
     [SerializeField] GameObject goalDisplay;
@@ -31,12 +39,43 @@ public class DisplayCharacter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (marching)
+        {
+            marchingTimer += Time.deltaTime;
+            if (marchingTimer > MarchManager.MARCH_INTERVAL)
+            {
+                marchingTimer = 0;
+                marching = false;
+                //Vector3 targetPosition = Vector3.Lerp(beforePositionForMarch, afterPositionForMarch, marchingTimer * 10);
+                gameObject.transform.position = afterPositionForMarch;
+            }
+            else
+            {
+                Vector3 targetPosition = Vector3.Lerp(beforePositionForMarch, afterPositionForMarch, marchingTimer / MarchManager.MARCH_INTERVAL);
+                gameObject.transform.position = targetPosition;
+            }
+        }
     }
-    public void SetAll(int cursol, int charaType, int reviveTurn, int reviveMaxTurn, int rarity, Character.CharaState charaState, int nowHp, int maxHp, int atk, int spd)
+    public void SetAll(int cursol, int charaType, int reviveTurn, int reviveMaxTurn, int rarity, Character.CharaState charaState, int nowHp, int maxHp, int atk, int spd, Vector2 moveVec, bool isBirth, bool isDeath)
     {
         this.cursol = cursol;
-        gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
+        if (moveVec.x != 0 || moveVec.y != 0)
+        {
+            marching = true;
+            afterPositionForMarch = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
+            Vector2 baseLaneAndMass = BattleStageManager.Instance.GetFrontlineLaneAndMassByCursol(cursol);
+            int beforeCursol = BattleStageManager.Instance.GetCursolByFrontlineLaneAndMass((int)(baseLaneAndMass.x - moveVec.x), (int)(baseLaneAndMass.y - moveVec.y));
+            beforePositionForMarch = BattleStageDisplayManager.Instance.GetCursolPosition(beforeCursol);
+            gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(beforeCursol);
+        }
+        else
+        {
+            gameObject.transform.position = BattleStageDisplayManager.Instance.GetCursolPosition(cursol);
+        }
+        if (isBirth)//小さい状態から始まる
+        {
+
+        }
         gameObject.GetComponent<Image>().sprite = GetDisplayCharacterByType(charaType);
         rarityText.text = "星" + rarity.ToString();
         waitingDisplay.SetActive(false);

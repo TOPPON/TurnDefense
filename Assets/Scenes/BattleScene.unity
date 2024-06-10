@@ -4669,6 +4669,9 @@ MonoBehaviour:
   NormalCursolObject: {fileID: 778181277}
   BattleStageObject: {fileID: 2128658271}
   DisplayCharacterPrefab: {fileID: 5856064536989425175, guid: d7aebdad43b35104a8440319d1b23357, type: 3}
+  GoldCoinPrefab: {fileID: 1557103692283683707, guid: 3fd5fec84462cf645b36a791d76b45db, type: 3}
+  SilverCoinPrefab: {fileID: 833673894050496288, guid: 767885bcf62b53b41af1069c7ceaa8d4, type: 3}
+  moneyDisplayObject: {fileID: 1559792307}
 --- !u!1 &527928279
 GameObject:
   m_ObjectHideFlags: 0
@@ -4780,7 +4783,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -720, y: 0}
+  m_AnchoredPosition: {x: -500, y: 0}
   m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556697856
@@ -12081,8 +12084,8 @@ MonoBehaviour:
   skillAngle: 0
   statusRollingSpeed: 0
   skillRollingSpeed: 0
-  statusRollingCount: 0
-  skillRollingCount: 0
+  statusRollingTimer: 0
+  skillRollingTimer: 0
   stateTimer: 0
   statusRouletteNumber: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   skillRouletteNumber: 00000000000000000000000000000000
