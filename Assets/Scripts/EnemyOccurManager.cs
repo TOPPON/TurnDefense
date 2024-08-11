@@ -32,20 +32,20 @@ public class EnemyOccurManager : MonoBehaviour
         int turns = GameManager.Instance.turns;
 
         //ゲーム難易度。敵の強くなる速度、発生率が変わる。
-        int difficulty = 2;
+        //int difficulty = 2;
+        int difficulty = GameManager.Instance.difficulty;
 
         //イメージ
         //dif1 t=1~9 strong=0(星0) 10~18 strong=1(星1) 19~27 strong=2(星2) n(10-dif)+1~(n+1)(10-dif) strong=n(星は0(0),1(1),2(2),3(4),4(8),5(10)の)強いやつ、発生率 70%
         //dif2 t=1~8 strong=0(星0) 9~16 strong=1(星1) 17~24 strong=2(星2) n(10-dif)+1~(n+1)(10-dif) strong=n(星は0(0),1(1),2(2),3(4),4(8),5(10)の)強いやつ、発生率 75%
         //dif3 t=1~7 strong=0(星0) 8~14 strong=1(星1) 15~21 strong=2(星2) n(10-dif)+1~(n+1)(10-dif) strong=n(星は0(0),1(1),2(2),3(4),4(8),5(10)の)強いやつ、発生率 80%
-
         //発生させるかどうかの判断
-        if ((difficulty * 5 + 70) * turns / 100 == (difficulty * 5 + 70) * (turns + 1) / 100+2)//無条件で発生させるように変更している
+        if ((difficulty * 5 + 70) * turns / 100 == (difficulty * 5 + 70) * (turns + 1) / 100)
         {
             return;
         }
         int occurs = 1;
-        //if (Random.Range(0, 100) < difficulty * 5 + 10) occurs = 2;
+        if (Random.Range(0, 100) < difficulty * 5 + 100) occurs = 2;
         for (int o = 0; o < occurs; o++)
         {
             Character newEnemy = new Character();
@@ -83,7 +83,7 @@ public class EnemyOccurManager : MonoBehaviour
             else if (n >= 8 && n <= 15) newEnemy.rarity = 4;
             else if (n >= 16) newEnemy.rarity = 5;
             newEnemy.charaState = Character.CharaState.Enemy;
-            newEnemy.lane = ((int)(turns * turns * (10 + k1) / 10.0f +  turns * (10 + k2) / 10.0f + k3))%BattleStageManager.Instance.laneCount+1;//Random.Range(1, BattleStageManager.Instance.laneCount + 1);
+            newEnemy.lane = ((int)(turns * turns * (10 + k1) / 10.0f +  turns * (10 + o + k2) / 10.0f + k3))%BattleStageManager.Instance.laneCount+1;//Random.Range(1, BattleStageManager.Instance.laneCount + 1);
             newEnemy.mass = BattleStageManager.Instance.laneLength + 2;
             BattleStageManager.Instance.AddCharacterToFrontline(newEnemy, newEnemy.lane, newEnemy.mass);
         }

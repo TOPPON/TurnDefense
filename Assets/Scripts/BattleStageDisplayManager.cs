@@ -135,7 +135,7 @@ public class BattleStageDisplayManager : MonoBehaviour
                             }
                         }
                     }*/
-                    dc.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec);
+                    dc.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec, isBirth, isDeath);
                     return;
                 }
             }
@@ -144,7 +144,7 @@ public class BattleStageDisplayManager : MonoBehaviour
             //switch();
             newDisplayChara = Instantiate(DisplayCharacterPrefab).GetComponent<DisplayCharacter>();
             newDisplayChara.transform.SetParent(BattleStageObject.transform, false);
-            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec);
+            newDisplayChara.SetAll(cursol, character.skillType, character.reviveTurn, character.reviveMaxTurn, character.rarity, character.charaState, character.nowHp, character.maxHp, character.power, character.attackSpd, moveVec, isBirth, isDeath);
             CharaDisplayObject.Add(newDisplayChara);
         }
         else
