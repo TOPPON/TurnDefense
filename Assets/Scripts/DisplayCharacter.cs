@@ -74,7 +74,8 @@ public class DisplayCharacter : MonoBehaviour
         }
         if (isBirth)//小さい状態から始まる
         {
-
+            birthing = isBirth;
+            gameObject.transform.localScale = new Vector3(0.1f, 0.1f);
         }
         gameObject.GetComponent<Image>().sprite = GetDisplayCharacterByType(charaType);
         rarityText.text = "星" + rarity.ToString();
